@@ -11,3 +11,6 @@ F:\1. Project\9. FCT\1.Softwave\FCT\FCT\obj\Debug\FCT.FCT.resources
 F:\1. Project\9. FCT\1.Softwave\FCT\FCT\bin\Debug\Newtonsoft.Json.dll
 F:\1. Project\9. FCT\1.Softwave\FCT\FCT\bin\Debug\Newtonsoft.Json.xml
 F:\1. Project\9. FCT\1.Softwave\FCT\FCT\obj\Debug\FCT.csproj.CopyComplete
+F:\1. Project\9. FCT\1.Softwave\FCT\FCT\obj\Debug\FCT.StartForm.resources
+F:\1. Project\9. FCT\1.Softwave\FCT\FCT\obj\Debug\FCT.Report.resources
+F:\1. Project\9. FCT\1.Softwave\FCT\FCT\obj\Debug\FCT.LoginForm.resources

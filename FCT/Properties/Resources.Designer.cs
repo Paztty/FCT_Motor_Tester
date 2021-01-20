@@ -63,6 +63,16 @@ namespace FCT.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap _13_levels_Jinguashi_in_taiwan {
+            get {
+                object obj = ResourceManager.GetObject("13-levels-Jinguashi-in-taiwan", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap arrow_right {
             get {
                 object obj = ResourceManager.GetObject("arrow right", resourceCulture);
@@ -206,6 +216,16 @@ namespace FCT.Properties {
         internal static System.Drawing.Bitmap saveModel {
             get {
                 object obj = ResourceManager.GetObject("saveModel", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Screenshot_2021_01_18_101436 {
+            get {
+                object obj = ResourceManager.GetObject("Screenshot 2021-01-18 101436", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

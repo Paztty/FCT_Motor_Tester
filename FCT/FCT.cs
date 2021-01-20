@@ -23,12 +23,16 @@ namespace FCT
 
         public FCT_TESTER_MODEL _MODEL = new FCT_TESTER_MODEL();
 
-        public string[] funtionList = { FUNCTION.Model, FUNCTION.Delay, FUNCTION.Volt, FUNCTION.Ampe, FUNCTION.Wat, FUNCTION.NOP, FUNCTION.FREQUENCY, FUNCTION.OFF_POWER_SOUCER, FUNCTION.FINISH, FUNCTION.SAVE, FUNCTION.REPEAT };
+        public string[] funtionList = { FUNCTION.Model, FUNCTION.Delay, FUNCTION.Volt, FUNCTION.Ampe, FUNCTION.Watt, FUNCTION.WattMax, FUNCTION.NOP, FUNCTION.FREQUENCY, FUNCTION.OFF_POWER_SOUCER, FUNCTION.FINISH, FUNCTION.SAVE, FUNCTION.REPEAT };
 
-        public int NumberOK = 0, NumberNG = 0, NumberTotal; 
+        public int NumberOK = 0, NumberNG = 0, NumberTotal;
+        public bool ProgramChange = false;
         public FCT()
         {
             InitializeComponent();
+
+            string path = @"C:\DaeyoungVN\FCT\";
+            if (!Directory.Exists(path)) Directory.CreateDirectory(path);
 
             PortMachine.PortName = WT310E.Port;
             PortMachine.BaudRate = WT310.Baudrate;
@@ -36,15 +40,49 @@ namespace FCT
             PortMachine.Parity = WT310.parity;
             PortMachine.StopBits = WT310.stopBits;
 
-            PortMachine.Open();
 
             PortMachine.DataReceived += new SerialDataReceivedEventHandler(DataReciver);
+            PortMachine.Open();
+
+            PortSwitch.DataReceived += PortSwitch_DataReceived;
 
             timerCheckCom.Start();
 
-            Column2.DataSource = funtionList;
+            clFunc.DataSource = funtionList;
+
+            for (int J = 0; J < dgwStep.Rows.Count - 1; J++)
+            {
+                for (int columnCount = 0; columnCount < dgwStep.Columns.Count; columnCount++)
+                {
+                    dgwStep[columnCount, J].Style.BackColor = colors[columnCount];
+                }
+                dgwStep.Rows[J].DefaultCellStyle.ForeColor = Color.Black;
+                dgwStep[4, J].Value = 0;
+            }
 
             backgroundWorker.RunWorkerAsync();
+        }
+
+        private void PortSwitch_DataReceived(object sender, SerialDataReceivedEventArgs e)
+        {
+            if (!PortSwitch.IsOpen) return;
+            string Frame = "";
+            try
+            {
+                Frame = PortSwitch.ReadLine();
+                if (Frame.Contains('@'))
+                {
+                    if (_MODEL.testDone)
+                        POWER_ON_label(labelFinalResult);
+                }
+            }
+            catch (Exception)
+            {
+                textBoxHistory.Invoke(new MethodInvoker(delegate
+                {
+                    textBoxHistory.AppendText("Errrrrrr" + Environment.NewLine);
+                }));
+            }
         }
 
         private void DataReciver(object obj, SerialDataReceivedEventArgs e)
@@ -56,7 +94,6 @@ namespace FCT
                 Frame = PortMachine.ReadLine();
                 textBoxHistory.Invoke(new MethodInvoker(delegate
                 {
-                    textBoxHistory.AppendText(Frame + Environment.NewLine);
                     if (WT310E.GetFromString(Frame))
                     {
                         UpdateValue();
@@ -109,6 +146,7 @@ namespace FCT
                     tsslbCOM.ForeColor = Color.White;
                     PortSwitch.PortName = SearchCom();
                     tsslbCOM.Text = PortSwitch.PortName + "                        ";
+                    PortSwitch.BaudRate = 115200;
                     PortSwitch.Open();
                 }
                 catch (Exception)
@@ -143,11 +181,23 @@ namespace FCT
 
         private void btnClose_Click(object sender, EventArgs e)
         {
-            PortMachine.DiscardInBuffer();
-            PortMachine.Close();
-            Environment.Exit(0);
-            this.Close();
-            Application.Exit();
+            string message = "Do you want to close this window?";
+            string title = "Close Window";
+            MessageBoxButtons buttons = MessageBoxButtons.YesNo;
+            DialogResult result = MessageBox.Show(message, title, buttons);
+            if (result == DialogResult.Yes)
+            {
+                PortMachine.DiscardInBuffer();
+                PortMachine.Close();
+                //Environment.Exit(0);
+                this.Close();
+                Application.Exit();
+            }
+            else
+            {
+                // Do something  
+            }
+
         }
 
         private void btnMaximize_Click(object sender, EventArgs e)
@@ -162,6 +212,21 @@ namespace FCT
                 this.WindowState = FormWindowState.Maximized;
             }
         }
+
+        public bool login()
+        {
+            LoginForm login = new LoginForm();
+            login.ShowDialog();
+            if (login.DialogResult == DialogResult.OK)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
 
         private void DrawChart(int okNumber, int ngNumber, int charCicle)
         {
@@ -204,13 +269,15 @@ namespace FCT
                 Graphics g = Graphics.FromImage(custormChart);
 
                 Color okColor = Color.FromArgb(30, 136, 221);
-                Color bacgroudColor = Color.FromArgb(62, 62, 62);
+                Color ngColor = Color.FromArgb(170, 0, 0);
+                Color bacgroudColor = Color.FromArgb(36, 36, 36);
                 SolidBrush brush = new SolidBrush(okColor);
+                SolidBrush brushNG = new SolidBrush(ngColor);
                 SolidBrush brushNumber = new SolidBrush(Color.White);
                 SolidBrush brushInside = new SolidBrush(bacgroudColor);
 
                 g.FillPie(brush, rect, 0, okRadian);
-                g.FillPie(Brushes.Red, rect, okRadian, ngRadian);
+                g.FillPie(brushNG, rect, okRadian, ngRadian);
                 g.FillPie(brushInside, rectInside, 0, 360);
 
                 string persenOkString = persentOk.ToString("F1") + " %";
@@ -233,7 +300,7 @@ namespace FCT
         {
             if (CharCircle <= 360)
             {
-                DrawChart(NumberOK, NumberNG , CharCircle);
+                DrawChart(NumberOK, NumberNG, CharCircle);
                 CharCircle = CharCircle + (360 - CharCircle) / 50 + 1;
                 timerUpdateChar.Start();
             }
@@ -246,21 +313,11 @@ namespace FCT
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            StartForm startForm = new StartForm();
+            //startForm.ShowDialog();
             timerUpdateChar.Start();
             timerGetValue.Start();
             PortMachine.Write(WT310.GETcontrol);
-        }
-
-        public void sellectRow(int index)
-        {
-            for (int i = 0; i < dgwStep.Rows.Count; i++)
-            {
-                dgwStep.Rows[i].DefaultCellStyle.BackColor = Color.FromArgb(60,60,60);
-                dgwStep.Rows[i].DefaultCellStyle.ForeColor = Color.White;
-            }
-            dgwStep.Rows[index].DefaultCellStyle.BackColor = Color.Pink;
-            dgwStep.Rows[index].DefaultCellStyle.ForeColor = Color.Black;
-            dgwStep.Rows[index].Selected = true;
         }
 
         private void Form1_ResizeEnd(object sender, EventArgs e)
@@ -270,49 +327,70 @@ namespace FCT
             dgwStep.Refresh();
         }
         public bool result = false;
-        public bool startTest = true;
+        bool startTest = true;
+        List<Color> colors = new List<Color>() {
+        Color.White,
+        Color.FromArgb(153, 187, 255),
+        Color.FromArgb(153, 255, 187),
+        Color.FromArgb(153, 255, 187),
+        Color.FromArgb(255, 221, 187),
+        Color.White,
+        };
+
+
+
         public void RunTest()
         {
             while (startTest)
             {
                 if (!_MODEL.testDone)
                 {
-                    for (int J = 0; J < dgwStep.Rows.Count; J++)
+                    for (int J = 0; J < dgwStep.Rows.Count - 1; J++)
                     {
-                        dgwStep.Rows[J].DefaultCellStyle.BackColor = Color.FromArgb(60, 60, 60);
-                        dgwStep.Rows[J].DefaultCellStyle.ForeColor = Color.White;
+                        for (int columnCount = 0; columnCount < dgwStep.Columns.Count; columnCount++)
+                        {
+                            dgwStep[columnCount, J].Style.BackColor = colors[columnCount];
+                        }
+                        dgwStep.Rows[J].DefaultCellStyle.ForeColor = Color.Black;
                         dgwStep[4, J].Value = 0;
                     }
                     TESTTING_label(labelFinalResult);
                     int retry = 0;
                     bool testResult = false;
-                    for (int i = 0; i < dgwStep.Rows.Count; i++)
+                    progressBar.Invoke(new MethodInvoker(delegate { progressBar.Maximum = dgwStep.RowCount - 1; }));
+                    for (int i = 0; i < dgwStep.Rows.Count - 1; i++)
                     {
-                        //Thread.Sleep(250);
                         if (_MODEL.FCT_FUN_QUEUE[i] != null)
                         {
-                            progressBar1.Invoke(new MethodInvoker(delegate { progressBar1.Value = 100 / (dgwStep.Rows.Count - 1) * i; }));
-                            dgwStep.Invoke( new MethodInvoker( delegate {
-                                dgwStep.CurrentCell = dgwStep[0, i-1];
+                            progressBar.Invoke(new MethodInvoker(delegate { progressBar.Value = i; }));
+                            dgwStep.Invoke(new MethodInvoker(delegate
+                            {
+                                dgwStep.Rows[i].Selected = true;
                                 for (int J = 0; J < dgwStep.Rows.Count; J++)
                                 {
-                                    dgwStep.Rows[J].DefaultCellStyle.BackColor = Color.FromArgb(40,40,40);
-                                    dgwStep.Rows[J].DefaultCellStyle.ForeColor = Color.White;
+                                    for (int columnCount = 0; columnCount < dgwStep.Columns.Count; columnCount++)
+                                    {
+                                        dgwStep[columnCount, J].Style.BackColor = colors[columnCount];
+                                    }
+
+                                    dgwStep.Rows[J].DefaultCellStyle.ForeColor = Color.Black;
                                 }
-                                dgwStep.Rows[i - 1].DefaultCellStyle.BackColor = Color.Pink;
-                                dgwStep.Rows[i-  1].DefaultCellStyle.ForeColor = Color.Black;
-                                dgwStep.Rows[i - 1].Selected = true;
+                                for (int columnCount = 0; columnCount < dgwStep.Columns.Count; columnCount++)
+                                {
+                                    dgwStep[columnCount, i].Style.BackColor = Color.FromArgb(118, 58, 118);
+                                }
+                                dgwStep.Rows[i].DefaultCellStyle.ForeColor = Color.White;
                             }));
-                            //sellectRow(i);
                             result = false;
                             while (!result)
                             {
-                                result = _MODEL.FCT_FUN_QUEUE[i].RUN_CMD(dgwStep, WT310E, i-1);
+                                result = _MODEL.FCT_FUN_QUEUE[i].RUN_CMD(dgwStep, WT310E, i);
                                 if (retry < _MODEL.rEAPEAT)
                                     retry++;
                                 else
                                     break;
                             }
+
                             if (result)
                             {
                                 testResult = result;
@@ -321,15 +399,11 @@ namespace FCT
                             else
                             {
                                 testResult = result;
-                                NG_label(labelFinalResult);
+                                NG_label(labelFinalResult, _MODEL.FCT_FUN_QUEUE[i].CMD);
                                 break;
                             }
                         }
                     }
-                    
-                    dgwStep.Invoke(new MethodInvoker(delegate {
-                        dgwStep.CurrentCell = dgwStep[0, 0];
-                    }));
                     if (testResult)
                     {
                         OK_label(labelFinalResult);
@@ -337,38 +411,130 @@ namespace FCT
                     }
                     else
                     {
-                        NG_label(labelFinalResult);
                         NumberNG++;
                     }
+                    NumberTotal = NumberOK + NumberNG;
+                    PortSwitch.Write("@");
                     while (WT310E.Ampe > 0.2)
                     { }
+                    writeReport(dgwStep);
+                    dgwStep.Invoke(new MethodInvoker(delegate
+                    {
+                        timerDelay.Start();
+                        dgwStep.CurrentCell = dgwStep[0, 0];
+                        textBoxHistory.AppendText(DateTime.Now.ToString("yyyy/MM/dd") + "   " + DateTime.Now.ToString("hh:mm:ss") + "   " + tbModelName.Text + "   " + labelFinalResult.Text + Environment.NewLine);
+                    }));
                     _MODEL.testDone = true;
+                    timerDelay.Start();
                 }
-            }   
+                else
+                {
+                    Thread.Sleep(250);
+                }
+            }
+        }
+
+        public void writeReport(DataGridView data)
+        {
+            string fileReportName = @"C:\DaeyoungVN\FCT\History\";
+            DateTime dateNew = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 7, 30, 0);
+            var moment = DateTime.Now;
+
+            string today;
+            int resultDay = DateTime.Compare(dateNew, moment);
+            Console.WriteLine(dateNew);
+            Console.WriteLine(DateTime.Now);
+            Console.WriteLine(resultDay);
+            if (resultDay > 0)
+            {
+                moment = moment.AddDays(-1);
+            }
+            today = moment.ToString("yyyy") + "\\" + moment.ToString("MMMM") + "\\" + moment.ToString("dd") + "\\";
+            fileReportName += today;
+
+
+            if (!Directory.Exists(fileReportName))
+            {
+                Directory.CreateDirectory(fileReportName);
+            }
+
+            if (ProgramChange && File.Exists(fileReportName + tbModelName.Text + ".txt"))
+            {
+                File.Move(fileReportName + tbModelName.Text + ".txt", fileReportName + tbModelName.Text + DateTime.Now.ToString("_hh-mm-ss") + ".txt");
+                ProgramChange = false;
+            }
+
+            if (!File.Exists(fileReportName + tbModelName.Text + ".txt"))
+            {
+                string contents = "SN/Model/Result/Date/Time/";
+                for (int i = 0; i < data.RowCount - 1; i++)
+                {
+                    if (data[1, i].Value.ToString() != FUNCTION.Model)
+                        contents += data[1, i].Value.ToString() + "/";
+                }
+                contents += Environment.NewLine;
+                contents += NumberTotal + "/" + tbModelName.Text + "/" + labelFinalResult.Text + "/" + DateTime.Now.ToString("yyyy MM dd") + "/" + DateTime.Now.ToString("hh mm ss") + "/";
+
+                for (int i = 0; i < data.RowCount - 1; i++)
+                {
+                    if (data[1, i].Value.ToString() != FUNCTION.Model)
+                        contents += data[4, i].Value.ToString() + "/";
+                }
+                contents += Environment.NewLine;
+                File.AppendAllText(fileReportName + tbModelName.Text + ".txt", contents);
+            }
+            else
+            {
+                string contents = NumberTotal + "/" + tbModelName.Text + "/" + labelFinalResult.Text + "/" + DateTime.Now.ToString("yyyy MM dd") + "/" + DateTime.Now.ToString("hh mm ss") + "/";
+                for (int i = 0; i < data.RowCount - 1; i++)
+                {
+                    if (data[1, i].Value.ToString() != FUNCTION.Model)
+                        contents += data[4, i].Value.ToString() + "/";
+                }
+                contents += Environment.NewLine;
+                File.AppendAllText(fileReportName + tbModelName.Text + ".txt", contents);
+            }
         }
 
         public void OK_label(Label label)
         {
-            label.Invoke(new MethodInvoker(delegate { 
+            label.Invoke(new MethodInvoker(delegate
+            {
                 label.Text = "OK";
                 timerUpdateChar.Start();
                 CharCircle = 0;
             }));
-            label.BackColor = Color.FromArgb(27, 183, 234);
+            label.BackColor = Color.FromArgb(4, 117, 24);
+            label.ForeColor = Color.White;
         }
-        public void NG_label(Label label)
+        public void NG_label(Label label, string Item)
         {
-            label.Invoke(new MethodInvoker(delegate {
-                label.Text = "FAIL";
+            label.Invoke(new MethodInvoker(delegate
+            {
+                label.Text = "FAIL" + Environment.NewLine + Item;
                 timerUpdateChar.Start();
                 CharCircle = 0;
             }));
-            label.BackColor = Color.Red;
+            label.BackColor = Color.FromArgb(170, 0, 0);
+            label.ForeColor = Color.Black;
         }
         public void TESTTING_label(Label label)
         {
             label.Invoke(new MethodInvoker(delegate { label.Text = "TEST"; }));
-            label.BackColor = Color.Yellow;
+            label.BackColor = Color.FromArgb(198, 198, 85);
+            label.ForeColor = Color.Black;
+        }
+        public void READY_label(Label label)
+        {
+            label.Invoke(new MethodInvoker(delegate { label.Text = "READY"; }));
+            label.BackColor = Color.FromArgb(0, 81, 136);
+            label.ForeColor = Color.White;
+        }
+        public void POWER_ON_label(Label label)
+        {
+            label.Invoke(new MethodInvoker(delegate { label.Text = "POWER ON"; }));
+            label.BackColor = Color.FromArgb(68, 0, 170);
+            label.ForeColor = Color.White;
         }
 
         public void UpdateValue()
@@ -400,15 +566,17 @@ namespace FCT
             lbHz.Text = WT310E.Frequency.ToString("f3");
 
 
-                if (_MODEL.testDone && WT310E.Ampe > 1)
-                {
+            if (_MODEL.testDone && labelFinalResult.Text == "READY")
+            {
+                if (WT310E.Ampe > 1)
                     _MODEL.testDone = false;
-                    for (int i = 0; i < dgwStep.Rows.Count; i++)
-                    {
-                        dgwStep.Rows[i].Selected = false;
-                    }
-                    startTest = true;
+                WT310E.WattMax = 0;
+                for (int i = 0; i < dgwStep.Rows.Count; i++)
+                {
+                    dgwStep.Rows[i].Selected = false;
                 }
+                startTest = true;
+            }
 
         }
 
@@ -418,6 +586,7 @@ namespace FCT
             {
                 PortMachine.Write(WT310.READvalue);
             }
+            lbTime.Text = DateTime.Now.ToString("hh:mm t") + 'M';
         }
 
         private void timerExit_Tick(object sender, EventArgs e)
@@ -427,25 +596,48 @@ namespace FCT
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            _MODEL.Save(dgwStep);
+            if (login())
+            {
+                tbModelName.ReadOnly = true;
+                tbMotor.ReadOnly = true;
+                dgwStep.ReadOnly = true;
+                if (tbMotor.TextLength > 2)
+                {
+                    _MODEL.Save(dgwStep, tbModelName.Text, tbMotor.Text);
+                }
+                else
+                {
+                    MessageBox.Show("Please enter motor name!");
+                }
+            }
         }
 
         private void readToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            tbModelName.ReadOnly = true;
+            tbMotor.ReadOnly = true;
+            dgwStep.ReadOnly = true;
             _MODEL.Open(dgwStep);
-            for (int i = 0; i < _MODEL.FCT_FUN_QUEUE.Length; i++)
-            {
-                if (_MODEL.FCT_FUN_QUEUE[i] != null)
-                {
-                    if (_MODEL.FCT_FUN_QUEUE[i].CMD == FUNCTION.Model)
-                    {
-                        lbHeader.Text = _MODEL.FCT_FUN_QUEUE[i].NOTE;
-                        break;
-                    }
-                }
+            tbModelName.Text = _MODEL.ModelName;
+            tbMotor.Text = _MODEL.ModelMotor;
 
+            //dgwStep.Columns[0].HeaderCell.Style.BackColor = Color.FromArgb(255, 179, 128);
+            //dgwStep.Columns[1].HeaderCell.Style.BackColor = Color.FromArgb(102, 153, 255);
+            //dgwStep.Columns[2].HeaderCell.Style.BackColor = Color.FromArgb(102, 255, 153);
+            //dgwStep.Columns[3].HeaderCell.Style.BackColor = Color.FromArgb(204, 153, 255);
+            //dgwStep.Columns[4].HeaderCell.Style.BackColor = Color.FromArgb(255, 204, 153);
+            //dgwStep.Columns[5].HeaderCell.Style.BackColor = Color.FromArgb(102, 255, 255);
+
+
+            for (int J = 0; J < dgwStep.Rows.Count - 1; J++)
+            {
+                for (int columnCount = 0; columnCount < dgwStep.Columns.Count; columnCount++)
+                {
+                    dgwStep[columnCount, J].Style.BackColor = colors[columnCount];
+                }
+                dgwStep.Rows[J].DefaultCellStyle.ForeColor = Color.Black;
+                dgwStep[4, J].Value = 0;
             }
-            sellectRow(0);
         }
 
         private void dgwStep_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e)
@@ -475,18 +667,174 @@ namespace FCT
 
         private void timerDelay_Tick(object sender, EventArgs e)
         {
-            timerDelay.Stop();
-            result = true;
+            if (_MODEL.testDone)
+                READY_label(labelFinalResult);
         }
 
         private void backgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
+
             RunTest();
         }
 
+        private void quitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string message = "Do you want to close this window?";
+            string title = "Close Window";
+            MessageBoxButtons buttons = MessageBoxButtons.YesNo;
+            DialogResult result = MessageBox.Show(message, title, buttons);
+            if (result == DialogResult.Yes)
+            {
+                PortMachine.DiscardInBuffer();
+                PortMachine.Close();
+                Environment.Exit(0);
+                this.Close();
+                Application.Exit();
+            }
+            else
+            {
+                // Do something  
+            }
+        }
+
+        private void dgwStep_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            if (Form.ModifierKeys == Keys.Control)
+            {
+                if (e.ColumnIndex == 0 && e.RowIndex < dgwStep.RowCount - 1)
+                {
+                    try
+                    {
+                        this.dgwStep.Rows.Insert(e.RowIndex + 1, dgwStep);
+                        dgwStep[1, e.RowIndex + 1].Value = dgwStep[1, e.RowIndex].Value;
+                        if (dgwStep[2, e.RowIndex].Value != null)
+                            dgwStep[2, e.RowIndex + 1].Value = dgwStep[2, e.RowIndex].Value;
+                        else
+                            dgwStep[2, e.RowIndex + 1].Value = 0;
+                        dgwStep[3, e.RowIndex + 1].Value = dgwStep[3, e.RowIndex].Value;
+                        dgwStep[4, e.RowIndex + 1].Value = dgwStep[4, e.RowIndex].Value;
+                        dgwStep[5, e.RowIndex + 1].Value = dgwStep[5, e.RowIndex].Value;
+
+                        for (int i = 0; i < dgwStep.RowCount; i++)
+                        {
+                            dgwStep[0, i].Value = i + 1;
+                        }
+                    }
+                    catch { }
+                }
+                else
+                {
+                    dgwStep.Rows.AddCopies(dgwStep.RowCount - 1, 1);
+                    dgwStep[1, e.RowIndex + 1].Value = dgwStep[1, e.RowIndex].Value;
+                    dgwStep[2, e.RowIndex + 1].Value = dgwStep[2, e.RowIndex].Value;
+                    dgwStep[3, e.RowIndex + 1].Value = dgwStep[3, e.RowIndex].Value;
+                    dgwStep[4, e.RowIndex + 1].Value = dgwStep[4, e.RowIndex].Value;
+                    dgwStep[5, e.RowIndex + 1].Value = dgwStep[5, e.RowIndex].Value;
+                    for (int i = 0; i < dgwStep.RowCount; i++)
+                    {
+                        dgwStep[0, i].Value = i + 1;
+                    }
+                }
+
+            }
+        }
+
+        private void clearToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            NumberNG = 0;
+            NumberOK = 0;
+            NumberTotal = 0;
+            lbCounterNumberTotal.Text = NumberTotal.ToString();
+            lbCounterNumberOK.Text = NumberOK.ToString();
+            lbCounterNumberNG.Text = NumberNG.ToString();
+            CharCircle = 0;
+            timerUpdateChar.Start();
+        }
+
+        private void editToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (login())
+            {
+                tbModelName.ReadOnly = false;
+                tbMotor.ReadOnly = false;
+                dgwStep.ReadOnly = false;
+            }
+        }
+
+        private void dgwStep_DataError(object sender, DataGridViewDataErrorEventArgs e)
+        {
+
+        }
+
+        private void viewToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Report report = new Report();
+            report.ShowDialog();
+        }
+
+        private void tsccbMeterPort_Click(object sender, EventArgs e)
+        {
+            string[] portList = SerialPort.GetPortNames();
+            tsccbMeterPort.Items.Clear();
+            for (int i = 0; i < portList.Length; i++)
+            {
+                tsccbMeterPort.Items.Add(portList[i]);
+            }
+
+        }
+        private void tsccbMeterPort_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (PortMachine.IsOpen)
+            {
+                PortMachine.Close();
+            }
+            PortMachine.PortName = tsccbMeterPort.SelectedItem.ToString();
+            WT310PortName.Text = PortMachine.PortName;
+            if (PortSwitch.PortName != PortMachine.PortName)
+            {
+                PortMachine.Open();
+            }
+            else
+            {
+                MessageBox.Show("Port ready user by power switch jig.");
+            }
+
+        }
+        private void toolStripComboBox2_Click(object sender, EventArgs e)
+        {
+            string[] portList = SerialPort.GetPortNames();
+            toolStripComboBox2.Items.Clear();
+            for (int i = 0; i < portList.Length; i++)
+            {
+                toolStripComboBox2.Items.Add(portList[i]);
+            }
+        }
+
+        private void toolStripComboBox2_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            timerCheckCom.Stop();
+            if (PortSwitch.IsOpen)
+            {
+                PortSwitch.Close();
+            }
+            PortSwitch.PortName = toolStripComboBox2.SelectedItem.ToString();
+            tsslbCOM.Text = PortSwitch.PortName;
+            if (PortSwitch.PortName != PortMachine.PortName)
+            {
+                PortSwitch.Open();
+            }
+            else
+            {
+                MessageBox.Show("Port ready user by WT310");
+            }
+        }
+
+
+
         private void labelFinalResult_Click(object sender, EventArgs e)
         {
-            _MODEL.testDone = false;
+            if (labelFinalResult.Text == "READY")
+                _MODEL.testDone = false;
             for (int i = 0; i < dgwStep.Rows.Count; i++)
             {
                 dgwStep.Rows[i].Selected = false;
@@ -497,6 +845,19 @@ namespace FCT
         {
             try
             {
+                for (int i = 0; i < dgwStep.RowCount - 1; i++)
+                {
+                    if (_MODEL.FCT_FUN_QUEUE[i] != null)
+                    {
+                        Console.WriteLine(_MODEL.FCT_FUN_QUEUE[i].CMD);
+                        if (dgwStep[1, i].Value.ToString() != _MODEL.FCT_FUN_QUEUE[i].CMD)
+                        {
+                            ProgramChange = true;
+                            break;
+                        }
+                    }
+
+                }
                 _MODEL.Update(dgwStep);
             }
             catch (Exception) { }
@@ -520,6 +881,8 @@ namespace FCT
         public double Volt = 0;
         public double Ampe = 0;
         public double Wat = 0;
+        public double WattMax = 0;
+        public double WattMin = 0;
         public double Frequency = 0;
         public double Delay = 0;
         public int None = 0;
@@ -538,7 +901,8 @@ namespace FCT
                 else if (splitData[2] == "INF") this.Wat = 0;
                 if (splitData[3] != "NAN" && splitData[3] != "INF") this.Frequency = Convert.ToDouble(splitData[3]); //.Substring(0, splitData[3].IndexOf('E'))) * Math.Pow(10, Convert.ToDouble(splitData[3].Substring(splitData[3].IndexOf('E') + 1)));
                 else if (splitData[3] == "INF") this.Frequency = 0;
-
+                if (this.Wat > this.WattMax) this.WattMax = this.Wat;
+                if (this.Wat < this.WattMin) this.WattMin = this.Wat;
                 return true;
             }
             else
@@ -550,6 +914,8 @@ namespace FCT
 
     public class FCT_TESTER_MODEL
     {
+        public string ModelName = "";
+        public string ModelMotor = "";
         public FUNCTION[] FCT_FUN_QUEUE = new FUNCTION[100];
 
         //public string path = @"C:\FCT\Model programs\";
@@ -557,7 +923,7 @@ namespace FCT
         private OpenFileDialog OpenModel = new OpenFileDialog();
         private SaveFileDialog SaveModel = new SaveFileDialog();
 
-        public bool testDone = false;
+        public bool testDone = true;
         public int rEAPEAT = 1;
 
         public FCT_TESTER_MODEL()
@@ -565,44 +931,45 @@ namespace FCT
 
         }
 
-        public bool Open(DataGridView functionList)
+        public void Open(DataGridView functionList)
         {
             OpenModel.DefaultExt = "fct";
             OpenModel.ShowDialog();
-
             string path = OpenModel.FileName;
             if (path != "")
             {
                 functionList.Rows.Clear();
                 string[] dataInLine;
                 var lines = File.ReadAllLines(path);
-                for (int i = 1; i < lines.Length; i++)
+                ModelName = lines[0];
+                ModelMotor = lines[1];
+                for (int i = 2; i < lines.Length; i++)
                 {
                     if (lines[i] != "")
                     {
                         dataInLine = lines[i].Split('|');
-                        functionList.Rows.Add(i, dataInLine[1], dataInLine[2], dataInLine[3], dataInLine[4], dataInLine[5]);
-                        this.FCT_FUN_QUEUE[i] = new FUNCTION(dataInLine[1], Convert.ToDouble(dataInLine[2]), Convert.ToDouble(dataInLine[3]), dataInLine[5]);
-                        string json = JsonConvert.SerializeObject(this.FCT_FUN_QUEUE[i], Formatting.Indented);
-                        Console.WriteLine(json);
+                        functionList.Rows.Add(i - 1, dataInLine[1], dataInLine[2], dataInLine[3], dataInLine[4], dataInLine[5]);
                     }
                 }
                 functionList.Refresh();
-                return true;
+                for (int i = 0; i < functionList.RowCount - 1; i++)
+                {
+                    this.FCT_FUN_QUEUE[i] = new FUNCTION(functionList[1, i].Value.ToString(), Convert.ToDouble(functionList[2, i].Value.ToString()), Convert.ToDouble(functionList[3, i].Value.ToString()), functionList[5, i].Value.ToString());
+                    string json = JsonConvert.SerializeObject(this.FCT_FUN_QUEUE[i], Formatting.Indented);
+                    Console.WriteLine(json);
+                }
+                this.testDone = true;
             }
-            else
-                return false;
-
         }
-        public bool Save(DataGridView functionList)
+        public bool Save(DataGridView functionList, string modelName, string motorName)
         {
-            string path = "";
-            string data = "" + Environment.NewLine;
+            string data = modelName + Environment.NewLine;
+            data += motorName + Environment.NewLine;
 
             SaveModel.DefaultExt = "fct";
             SaveModel.ShowDialog();
 
-            path = SaveModel.FileName;
+            string path = SaveModel.FileName;
 
             for (int i = 0; i < functionList.RowCount - 1; ++i)
             {
@@ -632,7 +999,9 @@ namespace FCT
             string path = @"C:\DaeyoungVN\FCT\";
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
 
-            string data = "" + Environment.NewLine;
+            string data = ModelName + Environment.NewLine;
+            data += ModelMotor + Environment.NewLine;
+
             for (int i = 0; i < functionList.RowCount - 1; ++i)
             {
                 for (int j = 0; j < functionList.ColumnCount; ++j)
@@ -645,22 +1014,31 @@ namespace FCT
                         data += "0";
                     data += "|";
                 }
-                data += System.Environment.NewLine;
+                data += Environment.NewLine;
             }
             File.WriteAllText(path + "temp.txt", data);
             functionList.Rows.Clear();
             string[] dataInLine;
             var lines = File.ReadAllLines(path + "temp.txt");
-            for (int i = 1; i < lines.Length; i++)
+
+            for (int i = 2; i < lines.Length; i++)
             {
+                Console.WriteLine(lines[i]);
                 if (lines[i] != "")
                 {
                     dataInLine = lines[i].Split('|');
                     functionList.Rows.Add(dataInLine[0], dataInLine[1], dataInLine[2], dataInLine[3], dataInLine[4], dataInLine[5]);
-                    this.FCT_FUN_QUEUE[i] = new FUNCTION(dataInLine[1], Convert.ToDouble(dataInLine[2]), Convert.ToDouble(dataInLine[3]), dataInLine[5]);
                 }
             }
             functionList.Refresh();
+
+            for (int i = 0; i < functionList.RowCount - 1; i++)
+            {
+                this.FCT_FUN_QUEUE[i] = new FUNCTION(functionList[1, i].Value.ToString(), Convert.ToDouble(functionList[2, i].Value.ToString()), Convert.ToDouble(functionList[3, i].Value.ToString()), functionList[5, i].Value.ToString());
+                string json = JsonConvert.SerializeObject(this.FCT_FUN_QUEUE[i], Formatting.Indented);
+                Console.WriteLine(json);
+            }
+            this.testDone = true;
         }
     }
 
@@ -670,7 +1048,9 @@ namespace FCT
         public const string Delay = "TIMER";
         public const string Volt = "V";
         public const string Ampe = "A";
-        public const string Wat = "W";
+        public const string Watt = "W";
+        public const string WattMax = "W_max";
+        public const string WattMin = "W_min";
         public const string NOP = "NOP";
         public const string FREQUENCY = "HZ";
         public const string OFF_POWER_SOUCER = "TURN OFF";
@@ -678,12 +1058,13 @@ namespace FCT
         public const string SAVE = "SAVE";
         public const string REPEAT = "REPEAT";
 
+        public SerialPort powerPort;
 
-        public string CMD = "";
-        public double MIN = 0;
-        public double MAX = 0;
-        public double READ = 0;
-        public string NOTE = "";
+        public string CMD { get; set; } = "";
+        public double MIN { get; set; } = 0;
+        public double MAX { get; set; } = 0;
+        public double READ { get; set; } = 0;
+        public string NOTE { get; set; } = "";
 
         public int rEAPEAT = 1;
 
@@ -709,28 +1090,29 @@ namespace FCT
                     }
                 case SAVE:
                     {
-                        Thread.Sleep(100);
                         functionList.Rows[Row].Cells[4].Value = this.MIN.ToString();
                         result = true;
                         break;
                     }
                 case Delay:
                     {
+                        for (int i = 0; i < this.MAX * 1000 / 100; i++)
+                        {
+                            functionList.Rows[Row].Cells[4].Value = (i * 100 / (float)1000).ToString("F1");
+                            Thread.Sleep(100);
+                        }
                         functionList.Rows[Row].Cells[4].Value = this.MAX.ToString();
-                        Thread.Sleep(Convert.ToInt32(this.MAX));
                         result = true;
                         break;
                     }
                 case REPEAT:
                     {
-                        Thread.Sleep(100);
                         this.rEAPEAT = Convert.ToInt32(this.MAX);
                         result = true;
                         break;
                     }
                 case Volt:
                     {
-                        Thread.Sleep(100);
                         functionList.Rows[Row].Cells[4].Value = value.Volt.ToString();
                         if (value.Volt >= this.MIN && value.Volt <= this.MAX)
                             result = true;
@@ -740,7 +1122,6 @@ namespace FCT
                     }
                 case Ampe:
                     {
-                        Thread.Sleep(100);
                         functionList.Rows[Row].Cells[4].Value = value.Ampe.ToString();
                         if (value.Ampe >= this.MIN && value.Ampe <= this.MAX)
                             result = true;
@@ -750,7 +1131,6 @@ namespace FCT
                     }
                 case FREQUENCY:
                     {
-                        Thread.Sleep(100);
                         functionList.Rows[Row].Cells[4].Value = value.Frequency.ToString();
                         if (value.Frequency >= this.MIN && value.Frequency <= this.MAX)
                             result = true;
@@ -758,9 +1138,8 @@ namespace FCT
                             result = false;
                         break;
                     }
-                case Wat:
+                case Watt:
                     {
-                        Thread.Sleep(100);
                         functionList.Rows[Row].Cells[4].Value = value.Wat.ToString();
                         if (value.Wat >= this.MIN && value.Wat <= this.MAX)
                             result = true;
@@ -768,30 +1147,53 @@ namespace FCT
                             result = false;
                         break;
                     }
+                case WattMax:
+                    {
+                        functionList.Rows[Row].Cells[4].Value = value.WattMax.ToString();
+                        if (value.WattMax >= this.MIN && value.WattMax <= this.MAX)
+                            result = true;
+                        else
+                            result = false;
+                        break;
+                    }
+                case WattMin:
+                    {
+                        functionList.Rows[Row].Cells[4].Value = value.WattMin.ToString();
+                        if (value.WattMin >= this.MIN && value.WattMin <= this.MAX)
+                            result = true;
+                        else
+                            result = false;
+                        break;
+                    }
                 case OFF_POWER_SOUCER:
                     {
-                        Thread.Sleep(100);
-                        functionList.Rows[Row].Cells[4].Value = this.MAX.ToString();
-                        result = true;
+                        if (powerPort.IsOpen)
+                        {
+                            powerPort.Write("@");
+                            functionList.Rows[Row].Cells[4].Value = this.MAX.ToString();
+                            result = true;
+                        }
+                        else
+                        {
+                            result = false;
+                        }
                         break;
                     }
                 case NOP:
                     {
-                        Thread.Sleep(100);
+                        value.WattMin = 500;
                         result = true;
                         break;
                     }
                 case FINISH:
                     {
-                        Thread.Sleep(100);
                         functionList.Rows[Row].Cells[4].Value = this.MAX.ToString();
                         result = true;
+
                         break;
                     }
             }
             return result;
         }
     }
-
-
 }

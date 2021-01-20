@@ -28,18 +28,19 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LoginForm));
             this.pnLogin = new System.Windows.Forms.Panel();
-            this.tbPasswordLogin = new System.Windows.Forms.TextBox();
             this.lbPassword = new System.Windows.Forms.Label();
+            this.tbPasswordLogin = new System.Windows.Forms.TextBox();
             this.btOK = new System.Windows.Forms.Button();
             this.btCancle = new System.Windows.Forms.Button();
             this.pnChangePass = new System.Windows.Forms.Panel();
-            this.lbPasswordChange = new System.Windows.Forms.Label();
-            this.tbPasswordChange = new System.Windows.Forms.TextBox();
-            this.lbPassNew = new System.Windows.Forms.Label();
-            this.tbPasswordNew = new System.Windows.Forms.TextBox();
             this.lbPassReNew = new System.Windows.Forms.Label();
             this.tbPasswordRetype = new System.Windows.Forms.TextBox();
+            this.lbPassNew = new System.Windows.Forms.Label();
+            this.tbPasswordNew = new System.Windows.Forms.TextBox();
+            this.lbPasswordChange = new System.Windows.Forms.Label();
+            this.tbPasswordChange = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.pnLogin.SuspendLayout();
             this.pnChangePass.SuspendLayout();
@@ -55,14 +56,6 @@
             this.pnLogin.Size = new System.Drawing.Size(367, 97);
             this.pnLogin.TabIndex = 0;
             // 
-            // tbPasswordLogin
-            // 
-            this.tbPasswordLogin.Location = new System.Drawing.Point(89, 37);
-            this.tbPasswordLogin.Name = "tbPasswordLogin";
-            this.tbPasswordLogin.PasswordChar = '*';
-            this.tbPasswordLogin.Size = new System.Drawing.Size(266, 20);
-            this.tbPasswordLogin.TabIndex = 0;
-            // 
             // lbPassword
             // 
             this.lbPassword.AutoSize = true;
@@ -71,6 +64,14 @@
             this.lbPassword.Size = new System.Drawing.Size(53, 13);
             this.lbPassword.TabIndex = 2;
             this.lbPassword.Text = "Password";
+            // 
+            // tbPasswordLogin
+            // 
+            this.tbPasswordLogin.Location = new System.Drawing.Point(89, 37);
+            this.tbPasswordLogin.Name = "tbPasswordLogin";
+            this.tbPasswordLogin.PasswordChar = '*';
+            this.tbPasswordLogin.Size = new System.Drawing.Size(266, 20);
+            this.tbPasswordLogin.TabIndex = 0;
             // 
             // btOK
             // 
@@ -105,22 +106,22 @@
             this.pnChangePass.Size = new System.Drawing.Size(367, 105);
             this.pnChangePass.TabIndex = 3;
             // 
-            // lbPasswordChange
+            // lbPassReNew
             // 
-            this.lbPasswordChange.AutoSize = true;
-            this.lbPasswordChange.Location = new System.Drawing.Point(12, 10);
-            this.lbPasswordChange.Name = "lbPasswordChange";
-            this.lbPasswordChange.Size = new System.Drawing.Size(53, 13);
-            this.lbPasswordChange.TabIndex = 2;
-            this.lbPasswordChange.Text = "Password";
+            this.lbPassReNew.AutoSize = true;
+            this.lbPassReNew.Location = new System.Drawing.Point(12, 68);
+            this.lbPassReNew.Name = "lbPassReNew";
+            this.lbPassReNew.Size = new System.Drawing.Size(112, 13);
+            this.lbPassReNew.TabIndex = 6;
+            this.lbPassReNew.Text = "Retype new password";
             // 
-            // tbPasswordChange
+            // tbPasswordRetype
             // 
-            this.tbPasswordChange.Location = new System.Drawing.Point(130, 3);
-            this.tbPasswordChange.Name = "tbPasswordChange";
-            this.tbPasswordChange.PasswordChar = '*';
-            this.tbPasswordChange.Size = new System.Drawing.Size(225, 20);
-            this.tbPasswordChange.TabIndex = 0;
+            this.tbPasswordRetype.Location = new System.Drawing.Point(130, 65);
+            this.tbPasswordRetype.Name = "tbPasswordRetype";
+            this.tbPasswordRetype.PasswordChar = '*';
+            this.tbPasswordRetype.Size = new System.Drawing.Size(225, 20);
+            this.tbPasswordRetype.TabIndex = 5;
             // 
             // lbPassNew
             // 
@@ -139,22 +140,22 @@
             this.tbPasswordNew.Size = new System.Drawing.Size(225, 20);
             this.tbPasswordNew.TabIndex = 3;
             // 
-            // lbPassReNew
+            // lbPasswordChange
             // 
-            this.lbPassReNew.AutoSize = true;
-            this.lbPassReNew.Location = new System.Drawing.Point(12, 68);
-            this.lbPassReNew.Name = "lbPassReNew";
-            this.lbPassReNew.Size = new System.Drawing.Size(112, 13);
-            this.lbPassReNew.TabIndex = 6;
-            this.lbPassReNew.Text = "Retype new password";
+            this.lbPasswordChange.AutoSize = true;
+            this.lbPasswordChange.Location = new System.Drawing.Point(12, 10);
+            this.lbPasswordChange.Name = "lbPasswordChange";
+            this.lbPasswordChange.Size = new System.Drawing.Size(53, 13);
+            this.lbPasswordChange.TabIndex = 2;
+            this.lbPasswordChange.Text = "Password";
             // 
-            // tbPasswordRetype
+            // tbPasswordChange
             // 
-            this.tbPasswordRetype.Location = new System.Drawing.Point(130, 65);
-            this.tbPasswordRetype.Name = "tbPasswordRetype";
-            this.tbPasswordRetype.PasswordChar = '*';
-            this.tbPasswordRetype.Size = new System.Drawing.Size(225, 20);
-            this.tbPasswordRetype.TabIndex = 5;
+            this.tbPasswordChange.Location = new System.Drawing.Point(130, 3);
+            this.tbPasswordChange.Name = "tbPasswordChange";
+            this.tbPasswordChange.PasswordChar = '*';
+            this.tbPasswordChange.Size = new System.Drawing.Size(225, 20);
+            this.tbPasswordChange.TabIndex = 0;
             // 
             // label2
             // 
@@ -167,7 +168,7 @@
             this.label2.TabIndex = 5;
             this.label2.Text = "Change Password";
             // 
-            // Form1
+            // LoginForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -178,7 +179,8 @@
             this.Controls.Add(this.btCancle);
             this.Controls.Add(this.btOK);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            this.Name = "Form1";
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.Name = "LoginForm";
             this.Text = "Login";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.pnLogin.ResumeLayout(false);

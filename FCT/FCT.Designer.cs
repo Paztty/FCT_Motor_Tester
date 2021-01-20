@@ -31,11 +31,12 @@ namespace FCT
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle10 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FCT));
             this.PortMachine = new System.IO.Ports.SerialPort(this.components);
             this.timerUpdateChar = new System.Windows.Forms.Timer(this.components);
             this.timerGetValue = new System.Windows.Forms.Timer(this.components);
@@ -58,14 +59,9 @@ namespace FCT
             this.pnTop = new System.Windows.Forms.Panel();
             this.panel1 = new System.Windows.Forms.Panel();
             this.tbModelName = new System.Windows.Forms.TextBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
             this.tbMotor = new System.Windows.Forms.TextBox();
             this.pnControlBox = new System.Windows.Forms.Panel();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
-            this.btnClose = new System.Windows.Forms.Button();
-            this.btnMaximize = new System.Windows.Forms.Button();
-            this.btnMinimize = new System.Windows.Forms.Button();
             this.menuStripMain = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.readToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -82,7 +78,6 @@ namespace FCT
             this.toolStripComboBox2 = new System.Windows.Forms.ToolStripComboBox();
             this.gbStatitsis = new System.Windows.Forms.GroupBox();
             this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
-            this.pBChar = new System.Windows.Forms.PictureBox();
             this.lbCounterNumberNG = new System.Windows.Forms.Label();
             this.label13 = new System.Windows.Forms.Label();
             this.lbCounterNumberOK = new System.Windows.Forms.Label();
@@ -102,6 +97,7 @@ namespace FCT
             this.gbHistory = new System.Windows.Forms.GroupBox();
             this.textBoxHistory = new System.Windows.Forms.TextBox();
             this.statusTrip = new System.Windows.Forms.StatusStrip();
+            this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.WT310PortName = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel9 = new System.Windows.Forms.ToolStripStatusLabel();
@@ -110,6 +106,12 @@ namespace FCT
             this.tsslbCOM = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel3 = new System.Windows.Forms.ToolStripStatusLabel();
             this.lbTime = new System.Windows.Forms.Label();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.btnClose = new System.Windows.Forms.Button();
+            this.btnMaximize = new System.Windows.Forms.Button();
+            this.btnMinimize = new System.Windows.Forms.Button();
+            this.pBChar = new System.Windows.Forms.PictureBox();
             this.tableLayoutPanel1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -121,7 +123,6 @@ namespace FCT
             this.menuStripMain.SuspendLayout();
             this.gbStatitsis.SuspendLayout();
             this.tableLayoutPanel4.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pBChar)).BeginInit();
             this.tableLayoutPanel3.SuspendLayout();
             this.groupBox6.SuspendLayout();
             this.gbWat.SuspendLayout();
@@ -129,6 +130,8 @@ namespace FCT
             this.groupBox3.SuspendLayout();
             this.gbHistory.SuspendLayout();
             this.statusTrip.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pBChar)).BeginInit();
             this.SuspendLayout();
             // 
             // timerUpdateChar
@@ -170,7 +173,7 @@ namespace FCT
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 46.22578F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 32.06413F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 21.71009F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 59F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 70F));
             this.tableLayoutPanel1.Controls.Add(this.groupBox2, 2, 2);
             this.tableLayoutPanel1.Controls.Add(this.groupBox1, 1, 2);
             this.tableLayoutPanel1.Controls.Add(this.pnTop, 0, 0);
@@ -203,10 +206,10 @@ namespace FCT
             this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.groupBox2.Font = new System.Drawing.Font("Microsoft YaHei UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.groupBox2.ForeColor = System.Drawing.Color.White;
-            this.groupBox2.Location = new System.Drawing.Point(729, 183);
+            this.groupBox2.Location = new System.Drawing.Point(724, 183);
             this.groupBox2.Name = "groupBox2";
             this.tableLayoutPanel1.SetRowSpan(this.groupBox2, 2);
-            this.groupBox2.Size = new System.Drawing.Size(475, 388);
+            this.groupBox2.Size = new System.Drawing.Size(471, 388);
             this.groupBox2.TabIndex = 3;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Result";
@@ -220,7 +223,7 @@ namespace FCT
             this.labelFinalResult.Location = new System.Drawing.Point(3, 24);
             this.labelFinalResult.Margin = new System.Windows.Forms.Padding(0);
             this.labelFinalResult.Name = "labelFinalResult";
-            this.labelFinalResult.Size = new System.Drawing.Size(469, 361);
+            this.labelFinalResult.Size = new System.Drawing.Size(465, 361);
             this.labelFinalResult.TabIndex = 17;
             this.labelFinalResult.Text = "READY";
             this.labelFinalResult.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -236,7 +239,7 @@ namespace FCT
             this.groupBox1.Location = new System.Drawing.Point(36, 183);
             this.groupBox1.Name = "groupBox1";
             this.tableLayoutPanel1.SetRowSpan(this.groupBox1, 2);
-            this.groupBox1.Size = new System.Drawing.Size(687, 388);
+            this.groupBox1.Size = new System.Drawing.Size(682, 388);
             this.groupBox1.TabIndex = 3;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Step program";
@@ -245,9 +248,9 @@ namespace FCT
             // 
             this.dgwStep.AllowUserToResizeColumns = false;
             this.dgwStep.AllowUserToResizeRows = false;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle1.ForeColor = System.Drawing.Color.Black;
-            this.dgwStep.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle6.ForeColor = System.Drawing.Color.Black;
+            this.dgwStep.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle6;
             this.dgwStep.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(36)))), ((int)(((byte)(36)))), ((int)(((byte)(36)))));
             this.dgwStep.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.dgwStep.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.Raised;
@@ -259,14 +262,14 @@ namespace FCT
             this.clHighValue,
             this.clValue,
             this.clNote});
-            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft YaHei UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle4.ForeColor = System.Drawing.Color.White;
-            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dgwStep.DefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle9.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle9.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            dataGridViewCellStyle9.Font = new System.Drawing.Font("Microsoft YaHei UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle9.ForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle9.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle9.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle9.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgwStep.DefaultCellStyle = dataGridViewCellStyle9;
             this.dgwStep.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dgwStep.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.dgwStep.EnableHeadersVisualStyles = false;
@@ -274,21 +277,21 @@ namespace FCT
             this.dgwStep.Location = new System.Drawing.Point(3, 24);
             this.dgwStep.MultiSelect = false;
             this.dgwStep.Name = "dgwStep";
-            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft YaHei UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dgwStep.RowHeadersDefaultCellStyle = dataGridViewCellStyle5;
+            dataGridViewCellStyle10.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle10.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            dataGridViewCellStyle10.Font = new System.Drawing.Font("Microsoft YaHei UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle10.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle10.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle10.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle10.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgwStep.RowHeadersDefaultCellStyle = dataGridViewCellStyle10;
             this.dgwStep.RowHeadersVisible = false;
             this.dgwStep.RowTemplate.DefaultCellStyle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
             this.dgwStep.RowTemplate.DefaultCellStyle.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.dgwStep.RowTemplate.DefaultCellStyle.ForeColor = System.Drawing.Color.Black;
             this.dgwStep.RowTemplate.Height = 25;
             this.dgwStep.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
-            this.dgwStep.Size = new System.Drawing.Size(681, 361);
+            this.dgwStep.Size = new System.Drawing.Size(676, 361);
             this.dgwStep.StandardTab = true;
             this.dgwStep.TabIndex = 0;
             this.dgwStep.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgwStep_CellEndEdit);
@@ -311,16 +314,16 @@ namespace FCT
             // 
             // clLowValue
             // 
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.clLowValue.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle7.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.clLowValue.DefaultCellStyle = dataGridViewCellStyle7;
             this.clLowValue.HeaderText = "Set Low";
             this.clLowValue.Name = "clLowValue";
             this.clLowValue.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             // 
             // clHighValue
             // 
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.clHighValue.DefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.clHighValue.DefaultCellStyle = dataGridViewCellStyle8;
             this.clHighValue.HeaderText = "Set High";
             this.clHighValue.Name = "clHighValue";
             this.clHighValue.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
@@ -358,7 +361,7 @@ namespace FCT
             // 
             this.panel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.panel1.Controls.Add(this.tbModelName);
-            this.panel1.Controls.Add(this.label1);
+            this.panel1.Controls.Add(this.pictureBox1);
             this.panel1.Controls.Add(this.label2);
             this.panel1.Controls.Add(this.tbMotor);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
@@ -373,37 +376,13 @@ namespace FCT
             this.tbModelName.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tbModelName.Font = new System.Drawing.Font("Microsoft Sans Serif", 30F, System.Drawing.FontStyle.Bold);
             this.tbModelName.ForeColor = System.Drawing.Color.Coral;
-            this.tbModelName.Location = new System.Drawing.Point(281, 0);
+            this.tbModelName.Location = new System.Drawing.Point(232, 0);
             this.tbModelName.Margin = new System.Windows.Forms.Padding(0);
             this.tbModelName.Name = "tbModelName";
-            this.tbModelName.Size = new System.Drawing.Size(736, 53);
+            this.tbModelName.Size = new System.Drawing.Size(785, 53);
             this.tbModelName.TabIndex = 4;
             this.tbModelName.Text = "Model name";
             this.tbModelName.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            // 
-            // label1
-            // 
-            this.label1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(48)))), ((int)(((byte)(48)))), ((int)(((byte)(48)))));
-            this.label1.Dock = System.Windows.Forms.DockStyle.Left;
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(65, 0);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(216, 53);
-            this.label1.TabIndex = 5;
-            this.label1.Text = "FCT Tester";
-            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // label2
-            // 
-            this.label2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.label2.Dock = System.Windows.Forms.DockStyle.Left;
-            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Image = global::FCT.Properties.Resources.Logo;
-            this.label2.Location = new System.Drawing.Point(0, 0);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(65, 53);
-            this.label2.TabIndex = 6;
-            this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // tbMotor
             // 
@@ -446,57 +425,6 @@ namespace FCT
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel2.Size = new System.Drawing.Size(60, 20);
             this.tableLayoutPanel2.TabIndex = 0;
-            // 
-            // btnClose
-            // 
-            this.btnClose.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.btnClose.BackgroundImage = global::FCT.Properties.Resources.close;
-            this.btnClose.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.btnClose.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btnClose.FlatAppearance.BorderSize = 0;
-            this.btnClose.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnClose.Location = new System.Drawing.Point(40, 0);
-            this.btnClose.Margin = new System.Windows.Forms.Padding(0);
-            this.btnClose.Name = "btnClose";
-            this.btnClose.Size = new System.Drawing.Size(20, 20);
-            this.btnClose.TabIndex = 2;
-            this.btnClose.Text = " ";
-            this.btnClose.UseVisualStyleBackColor = false;
-            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
-            // 
-            // btnMaximize
-            // 
-            this.btnMaximize.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.btnMaximize.BackgroundImage = global::FCT.Properties.Resources.masinize;
-            this.btnMaximize.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.btnMaximize.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btnMaximize.FlatAppearance.BorderSize = 0;
-            this.btnMaximize.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnMaximize.Location = new System.Drawing.Point(20, 0);
-            this.btnMaximize.Margin = new System.Windows.Forms.Padding(0);
-            this.btnMaximize.Name = "btnMaximize";
-            this.btnMaximize.Size = new System.Drawing.Size(20, 20);
-            this.btnMaximize.TabIndex = 1;
-            this.btnMaximize.Text = " ";
-            this.btnMaximize.UseVisualStyleBackColor = false;
-            this.btnMaximize.Click += new System.EventHandler(this.btnMaximize_Click);
-            // 
-            // btnMinimize
-            // 
-            this.btnMinimize.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.btnMinimize.BackgroundImage = global::FCT.Properties.Resources.minimize;
-            this.btnMinimize.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.btnMinimize.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btnMinimize.FlatAppearance.BorderSize = 0;
-            this.btnMinimize.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnMinimize.Location = new System.Drawing.Point(0, 0);
-            this.btnMinimize.Margin = new System.Windows.Forms.Padding(0);
-            this.btnMinimize.Name = "btnMinimize";
-            this.btnMinimize.Size = new System.Drawing.Size(20, 20);
-            this.btnMinimize.TabIndex = 0;
-            this.btnMinimize.Text = " ";
-            this.btnMinimize.UseVisualStyleBackColor = false;
-            this.btnMinimize.Click += new System.EventHandler(this.btnMinimize_Click);
             // 
             // menuStripMain
             // 
@@ -605,7 +533,7 @@ namespace FCT
             this.powerMetterToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.tsccbMeterPort});
             this.powerMetterToolStripMenuItem.Name = "powerMetterToolStripMenuItem";
-            this.powerMetterToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.powerMetterToolStripMenuItem.Size = new System.Drawing.Size(145, 22);
             this.powerMetterToolStripMenuItem.Text = "Power metter";
             // 
             // tsccbMeterPort
@@ -639,7 +567,7 @@ namespace FCT
             this.powerSwitchToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripComboBox2});
             this.powerSwitchToolStripMenuItem.Name = "powerSwitchToolStripMenuItem";
-            this.powerSwitchToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.powerSwitchToolStripMenuItem.Size = new System.Drawing.Size(145, 22);
             this.powerSwitchToolStripMenuItem.Text = "Power switch";
             // 
             // toolStripComboBox2
@@ -675,10 +603,10 @@ namespace FCT
             this.gbStatitsis.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.gbStatitsis.Font = new System.Drawing.Font("Microsoft YaHei UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.gbStatitsis.ForeColor = System.Drawing.Color.White;
-            this.gbStatitsis.Location = new System.Drawing.Point(1210, 183);
+            this.gbStatitsis.Location = new System.Drawing.Point(1201, 183);
             this.gbStatitsis.Name = "gbStatitsis";
             this.tableLayoutPanel1.SetRowSpan(this.gbStatitsis, 2);
-            this.gbStatitsis.Size = new System.Drawing.Size(319, 388);
+            this.gbStatitsis.Size = new System.Drawing.Size(317, 388);
             this.gbStatitsis.TabIndex = 2;
             this.gbStatitsis.TabStop = false;
             this.gbStatitsis.Text = "Statitics";
@@ -705,19 +633,8 @@ namespace FCT
             this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 9.09091F));
             this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 9.09091F));
             this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 45.45454F));
-            this.tableLayoutPanel4.Size = new System.Drawing.Size(313, 361);
+            this.tableLayoutPanel4.Size = new System.Drawing.Size(311, 361);
             this.tableLayoutPanel4.TabIndex = 1;
-            // 
-            // pBChar
-            // 
-            this.pBChar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.pBChar.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pBChar.Location = new System.Drawing.Point(0, 192);
-            this.pBChar.Margin = new System.Windows.Forms.Padding(0);
-            this.pBChar.Name = "pBChar";
-            this.pBChar.Size = new System.Drawing.Size(313, 169);
-            this.pBChar.TabIndex = 9;
-            this.pBChar.TabStop = false;
             // 
             // lbCounterNumberNG
             // 
@@ -728,7 +645,7 @@ namespace FCT
             this.lbCounterNumberNG.Location = new System.Drawing.Point(0, 160);
             this.lbCounterNumberNG.Margin = new System.Windows.Forms.Padding(0);
             this.lbCounterNumberNG.Name = "lbCounterNumberNG";
-            this.lbCounterNumberNG.Size = new System.Drawing.Size(313, 32);
+            this.lbCounterNumberNG.Size = new System.Drawing.Size(311, 32);
             this.lbCounterNumberNG.TabIndex = 8;
             this.lbCounterNumberNG.Text = "NG number";
             this.lbCounterNumberNG.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -742,7 +659,7 @@ namespace FCT
             this.label13.Location = new System.Drawing.Point(0, 131);
             this.label13.Margin = new System.Windows.Forms.Padding(0, 3, 0, 0);
             this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(313, 29);
+            this.label13.Size = new System.Drawing.Size(311, 29);
             this.label13.TabIndex = 7;
             this.label13.Text = "NG";
             this.label13.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -756,7 +673,7 @@ namespace FCT
             this.lbCounterNumberOK.Location = new System.Drawing.Point(0, 96);
             this.lbCounterNumberOK.Margin = new System.Windows.Forms.Padding(0);
             this.lbCounterNumberOK.Name = "lbCounterNumberOK";
-            this.lbCounterNumberOK.Size = new System.Drawing.Size(313, 32);
+            this.lbCounterNumberOK.Size = new System.Drawing.Size(311, 32);
             this.lbCounterNumberOK.TabIndex = 6;
             this.lbCounterNumberOK.Text = "OK number";
             this.lbCounterNumberOK.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -770,7 +687,7 @@ namespace FCT
             this.label8.Location = new System.Drawing.Point(0, 67);
             this.label8.Margin = new System.Windows.Forms.Padding(0, 3, 0, 0);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(313, 29);
+            this.label8.Size = new System.Drawing.Size(311, 29);
             this.label8.TabIndex = 5;
             this.label8.Text = "OK";
             this.label8.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -784,7 +701,7 @@ namespace FCT
             this.lbCounterNumberTotal.Location = new System.Drawing.Point(0, 32);
             this.lbCounterNumberTotal.Margin = new System.Windows.Forms.Padding(0);
             this.lbCounterNumberTotal.Name = "lbCounterNumberTotal";
-            this.lbCounterNumberTotal.Size = new System.Drawing.Size(313, 32);
+            this.lbCounterNumberTotal.Size = new System.Drawing.Size(311, 32);
             this.lbCounterNumberTotal.TabIndex = 4;
             this.lbCounterNumberTotal.Text = "Total number";
             this.lbCounterNumberTotal.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -798,7 +715,7 @@ namespace FCT
             this.label3.Location = new System.Drawing.Point(0, 0);
             this.label3.Margin = new System.Windows.Forms.Padding(0);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(313, 32);
+            this.label3.Size = new System.Drawing.Size(311, 32);
             this.label3.TabIndex = 3;
             this.label3.Text = "Total";
             this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -809,7 +726,7 @@ namespace FCT
             this.progressBar.Dock = System.Windows.Forms.DockStyle.Fill;
             this.progressBar.Location = new System.Drawing.Point(36, 708);
             this.progressBar.Name = "progressBar";
-            this.progressBar.Size = new System.Drawing.Size(1493, 14);
+            this.progressBar.Size = new System.Drawing.Size(1482, 14);
             this.progressBar.Step = 1;
             this.progressBar.TabIndex = 4;
             // 
@@ -832,7 +749,7 @@ namespace FCT
             this.tableLayoutPanel3.Padding = new System.Windows.Forms.Padding(5);
             this.tableLayoutPanel3.RowCount = 1;
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel3.Size = new System.Drawing.Size(1493, 100);
+            this.tableLayoutPanel3.Size = new System.Drawing.Size(1482, 100);
             this.tableLayoutPanel3.TabIndex = 5;
             // 
             // groupBox6
@@ -842,9 +759,9 @@ namespace FCT
             this.groupBox6.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.groupBox6.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.groupBox6.ForeColor = System.Drawing.Color.RoyalBlue;
-            this.groupBox6.Location = new System.Drawing.Point(1118, 8);
+            this.groupBox6.Location = new System.Drawing.Point(1112, 8);
             this.groupBox6.Name = "groupBox6";
-            this.groupBox6.Size = new System.Drawing.Size(367, 84);
+            this.groupBox6.Size = new System.Drawing.Size(362, 84);
             this.groupBox6.TabIndex = 3;
             this.groupBox6.TabStop = false;
             this.groupBox6.Text = "Frequency (Hz)";
@@ -856,7 +773,7 @@ namespace FCT
             this.lbHz.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbHz.Location = new System.Drawing.Point(3, 26);
             this.lbHz.Name = "lbHz";
-            this.lbHz.Size = new System.Drawing.Size(361, 55);
+            this.lbHz.Size = new System.Drawing.Size(356, 55);
             this.lbHz.TabIndex = 1;
             this.lbHz.Text = "50 Hz";
             this.lbHz.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -868,9 +785,9 @@ namespace FCT
             this.gbWat.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.gbWat.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.gbWat.ForeColor = System.Drawing.Color.Yellow;
-            this.gbWat.Location = new System.Drawing.Point(748, 8);
+            this.gbWat.Location = new System.Drawing.Point(744, 8);
             this.gbWat.Name = "gbWat";
-            this.gbWat.Size = new System.Drawing.Size(364, 84);
+            this.gbWat.Size = new System.Drawing.Size(362, 84);
             this.gbWat.TabIndex = 2;
             this.gbWat.TabStop = false;
             this.gbWat.Text = "Watt (mW)";
@@ -882,7 +799,7 @@ namespace FCT
             this.lbWat.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbWat.Location = new System.Drawing.Point(3, 26);
             this.lbWat.Name = "lbWat";
-            this.lbWat.Size = new System.Drawing.Size(358, 55);
+            this.lbWat.Size = new System.Drawing.Size(356, 55);
             this.lbWat.TabIndex = 1;
             this.lbWat.Text = "0.00";
             this.lbWat.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -894,9 +811,9 @@ namespace FCT
             this.gbAmpe.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.gbAmpe.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.gbAmpe.ForeColor = System.Drawing.Color.Green;
-            this.gbAmpe.Location = new System.Drawing.Point(378, 8);
+            this.gbAmpe.Location = new System.Drawing.Point(376, 8);
             this.gbAmpe.Name = "gbAmpe";
-            this.gbAmpe.Size = new System.Drawing.Size(364, 84);
+            this.gbAmpe.Size = new System.Drawing.Size(362, 84);
             this.gbAmpe.TabIndex = 1;
             this.gbAmpe.TabStop = false;
             this.gbAmpe.Text = "Ampe (mA)";
@@ -908,7 +825,7 @@ namespace FCT
             this.lbAmpe.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbAmpe.Location = new System.Drawing.Point(3, 26);
             this.lbAmpe.Name = "lbAmpe";
-            this.lbAmpe.Size = new System.Drawing.Size(358, 55);
+            this.lbAmpe.Size = new System.Drawing.Size(356, 55);
             this.lbAmpe.TabIndex = 1;
             this.lbAmpe.Text = "0.00";
             this.lbAmpe.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -922,7 +839,7 @@ namespace FCT
             this.groupBox3.ForeColor = System.Drawing.Color.Red;
             this.groupBox3.Location = new System.Drawing.Point(8, 8);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(364, 84);
+            this.groupBox3.Size = new System.Drawing.Size(362, 84);
             this.groupBox3.TabIndex = 0;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Volt (V)";
@@ -934,7 +851,7 @@ namespace FCT
             this.lbVol.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbVol.Location = new System.Drawing.Point(3, 26);
             this.lbVol.Name = "lbVol";
-            this.lbVol.Size = new System.Drawing.Size(358, 55);
+            this.lbVol.Size = new System.Drawing.Size(356, 55);
             this.lbVol.TabIndex = 0;
             this.lbVol.Text = "0.00";
             this.lbVol.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -949,7 +866,7 @@ namespace FCT
             this.gbHistory.ForeColor = System.Drawing.Color.White;
             this.gbHistory.Location = new System.Drawing.Point(36, 577);
             this.gbHistory.Name = "gbHistory";
-            this.gbHistory.Size = new System.Drawing.Size(1168, 125);
+            this.gbHistory.Size = new System.Drawing.Size(1159, 125);
             this.gbHistory.TabIndex = 6;
             this.gbHistory.TabStop = false;
             this.gbHistory.Text = "History";
@@ -964,7 +881,7 @@ namespace FCT
             this.textBoxHistory.Multiline = true;
             this.textBoxHistory.Name = "textBoxHistory";
             this.textBoxHistory.ShortcutsEnabled = false;
-            this.textBoxHistory.Size = new System.Drawing.Size(1162, 98);
+            this.textBoxHistory.Size = new System.Drawing.Size(1153, 98);
             this.textBoxHistory.TabIndex = 0;
             // 
             // statusTrip
@@ -972,6 +889,7 @@ namespace FCT
             this.statusTrip.BackColor = System.Drawing.Color.DodgerBlue;
             this.tableLayoutPanel1.SetColumnSpan(this.statusTrip, 5);
             this.statusTrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripStatusLabel2,
             this.toolStripStatusLabel1,
             this.WT310PortName,
             this.toolStripStatusLabel9,
@@ -984,6 +902,12 @@ namespace FCT
             this.statusTrip.Size = new System.Drawing.Size(1593, 22);
             this.statusTrip.TabIndex = 7;
             this.statusTrip.Text = "statusStrip1";
+            // 
+            // toolStripStatusLabel2
+            // 
+            this.toolStripStatusLabel2.Name = "toolStripStatusLabel2";
+            this.toolStripStatusLabel2.Size = new System.Drawing.Size(136, 17);
+            this.toolStripStatusLabel2.Text = "FCT Tester V1.1.0              ";
             // 
             // toolStripStatusLabel1
             // 
@@ -1038,12 +962,97 @@ namespace FCT
             this.lbTime.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lbTime.Font = new System.Drawing.Font("Microsoft YaHei UI", 24F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbTime.ForeColor = System.Drawing.Color.White;
-            this.lbTime.Location = new System.Drawing.Point(1210, 574);
+            this.lbTime.Location = new System.Drawing.Point(1201, 574);
             this.lbTime.Name = "lbTime";
-            this.lbTime.Size = new System.Drawing.Size(319, 131);
+            this.lbTime.Size = new System.Drawing.Size(317, 131);
             this.lbTime.TabIndex = 8;
             this.lbTime.Text = "00:00 AM";
             this.lbTime.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // pictureBox1
+            // 
+            this.pictureBox1.BackgroundImage = global::FCT.Properties.Resources.LogoMakr_2C3qi0;
+            this.pictureBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Left;
+            this.pictureBox1.Location = new System.Drawing.Point(62, 0);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(170, 53);
+            this.pictureBox1.TabIndex = 7;
+            this.pictureBox1.TabStop = false;
+            // 
+            // label2
+            // 
+            this.label2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(60)))), ((int)(((byte)(60)))));
+            this.label2.Dock = System.Windows.Forms.DockStyle.Left;
+            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.Image = global::FCT.Properties.Resources.Logo;
+            this.label2.Location = new System.Drawing.Point(0, 0);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(62, 53);
+            this.label2.TabIndex = 6;
+            this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // btnClose
+            // 
+            this.btnClose.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.btnClose.BackgroundImage = global::FCT.Properties.Resources.close;
+            this.btnClose.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.btnClose.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btnClose.FlatAppearance.BorderSize = 0;
+            this.btnClose.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnClose.Location = new System.Drawing.Point(40, 0);
+            this.btnClose.Margin = new System.Windows.Forms.Padding(0);
+            this.btnClose.Name = "btnClose";
+            this.btnClose.Size = new System.Drawing.Size(20, 20);
+            this.btnClose.TabIndex = 2;
+            this.btnClose.Text = " ";
+            this.btnClose.UseVisualStyleBackColor = false;
+            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
+            // 
+            // btnMaximize
+            // 
+            this.btnMaximize.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.btnMaximize.BackgroundImage = global::FCT.Properties.Resources.masinize;
+            this.btnMaximize.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.btnMaximize.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btnMaximize.FlatAppearance.BorderSize = 0;
+            this.btnMaximize.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnMaximize.Location = new System.Drawing.Point(20, 0);
+            this.btnMaximize.Margin = new System.Windows.Forms.Padding(0);
+            this.btnMaximize.Name = "btnMaximize";
+            this.btnMaximize.Size = new System.Drawing.Size(20, 20);
+            this.btnMaximize.TabIndex = 1;
+            this.btnMaximize.Text = " ";
+            this.btnMaximize.UseVisualStyleBackColor = false;
+            this.btnMaximize.Click += new System.EventHandler(this.btnMaximize_Click);
+            // 
+            // btnMinimize
+            // 
+            this.btnMinimize.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.btnMinimize.BackgroundImage = global::FCT.Properties.Resources.minimize;
+            this.btnMinimize.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.btnMinimize.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btnMinimize.FlatAppearance.BorderSize = 0;
+            this.btnMinimize.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnMinimize.Location = new System.Drawing.Point(0, 0);
+            this.btnMinimize.Margin = new System.Windows.Forms.Padding(0);
+            this.btnMinimize.Name = "btnMinimize";
+            this.btnMinimize.Size = new System.Drawing.Size(20, 20);
+            this.btnMinimize.TabIndex = 0;
+            this.btnMinimize.Text = " ";
+            this.btnMinimize.UseVisualStyleBackColor = false;
+            this.btnMinimize.Click += new System.EventHandler(this.btnMinimize_Click);
+            // 
+            // pBChar
+            // 
+            this.pBChar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.pBChar.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pBChar.Location = new System.Drawing.Point(0, 192);
+            this.pBChar.Margin = new System.Windows.Forms.Padding(0);
+            this.pBChar.Name = "pBChar";
+            this.pBChar.Size = new System.Drawing.Size(311, 169);
+            this.pBChar.TabIndex = 9;
+            this.pBChar.TabStop = false;
             // 
             // FCT
             // 
@@ -1057,6 +1066,7 @@ namespace FCT
             this.Controls.Add(this.tableLayoutPanel1);
             this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "FCT";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.ResizeEnd += new System.EventHandler(this.Form1_ResizeEnd);
@@ -1075,7 +1085,6 @@ namespace FCT
             this.menuStripMain.PerformLayout();
             this.gbStatitsis.ResumeLayout(false);
             this.tableLayoutPanel4.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.pBChar)).EndInit();
             this.tableLayoutPanel3.ResumeLayout(false);
             this.groupBox6.ResumeLayout(false);
             this.gbWat.ResumeLayout(false);
@@ -1085,6 +1094,8 @@ namespace FCT
             this.gbHistory.PerformLayout();
             this.statusTrip.ResumeLayout(false);
             this.statusTrip.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pBChar)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -1155,7 +1166,6 @@ namespace FCT
         private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem;
         private System.Windows.Forms.Label lbTime;
         private System.Windows.Forms.DataGridView dgwStep;
-        private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.ToolStripComboBox tsccbMeterPort;
         private System.Windows.Forms.ToolStripComboBox toolStripComboBox2;
@@ -1165,6 +1175,8 @@ namespace FCT
         private System.Windows.Forms.DataGridViewTextBoxColumn clHighValue;
         private System.Windows.Forms.DataGridViewTextBoxColumn clValue;
         private System.Windows.Forms.DataGridViewTextBoxColumn clNote;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel2;
+        private System.Windows.Forms.PictureBox pictureBox1;
     }
 }
 

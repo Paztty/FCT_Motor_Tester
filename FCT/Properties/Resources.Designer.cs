@@ -163,6 +163,16 @@ namespace FCT.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap LogoMakr_2C3qi0 {
+            get {
+                object obj = ResourceManager.GetObject("LogoMakr-2C3qi0", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap manual {
             get {
                 object obj = ResourceManager.GetObject("manual", resourceCulture);

@@ -25,6 +25,8 @@ namespace FCT
 
         public string[] funtionList = { FUNCTION.Model, FUNCTION.Delay, FUNCTION.Volt, FUNCTION.Ampe, FUNCTION.Watt, FUNCTION.WattMax, FUNCTION.NOP, FUNCTION.FREQUENCY, FUNCTION.OFF_POWER_SOUCER, FUNCTION.FINISH, FUNCTION.SAVE, FUNCTION.REPEAT };
 
+        public static SerialPort PowerSwitchPort;
+
         public int NumberOK = 0, NumberNG = 0, NumberTotal;
         public bool ProgramChange = false;
         public FCT()
@@ -45,7 +47,7 @@ namespace FCT
             PortMachine.Open();
 
             PortSwitch.DataReceived += PortSwitch_DataReceived;
-
+            PowerSwitchPort = PortSwitch;
             timerCheckCom.Start();
 
             clFunc.DataSource = funtionList;
@@ -80,7 +82,7 @@ namespace FCT
             {
                 textBoxHistory.Invoke(new MethodInvoker(delegate
                 {
-                    textBoxHistory.AppendText("Errrrrrr" + Environment.NewLine);
+                    textBoxHistory.AppendText("Power switch communication fail..." + Environment.NewLine);
                 }));
             }
         }
@@ -105,7 +107,7 @@ namespace FCT
             {
                 textBoxHistory.Invoke(new MethodInvoker(delegate
                 {
-                    textBoxHistory.AppendText("Errrrrrr" + Environment.NewLine);
+                    textBoxHistory.AppendText("WT310 comunication fail..." + Environment.NewLine);
                 }));
             }
         }
@@ -144,7 +146,7 @@ namespace FCT
                 try
                 {
                     tsslbCOM.ForeColor = Color.White;
-                    PortSwitch.PortName = SearchCom();
+                    //PortSwitch.PortName = SearchCom();
                     tsslbCOM.Text = PortSwitch.PortName + "                        ";
                     PortSwitch.BaudRate = 115200;
                     PortSwitch.Open();
@@ -314,7 +316,7 @@ namespace FCT
         private void Form1_Load(object sender, EventArgs e)
         {
             StartForm startForm = new StartForm();
-            //startForm.ShowDialog();
+            startForm.ShowDialog();
             timerUpdateChar.Start();
             timerGetValue.Start();
             PortMachine.Write(WT310.GETcontrol);
@@ -385,6 +387,10 @@ namespace FCT
                             while (!result)
                             {
                                 result = _MODEL.FCT_FUN_QUEUE[i].RUN_CMD(dgwStep, WT310E, i);
+                                if (PortSwitch.IsOpen && _MODEL.FCT_FUN_QUEUE[i].CMD == FUNCTION.OFF_POWER_SOUCER)
+                                {
+                                    PortSwitch.Write("@");
+                                }
                                 if (retry < _MODEL.rEAPEAT)
                                     retry++;
                                 else
@@ -414,10 +420,9 @@ namespace FCT
                         NumberNG++;
                     }
                     NumberTotal = NumberOK + NumberNG;
-                    PortSwitch.Write("@");
                     while (WT310E.Ampe > 0.2)
                     { }
-                    writeReport(dgwStep);
+                    writeReport(dgwStep, testResult);
                     dgwStep.Invoke(new MethodInvoker(delegate
                     {
                         timerDelay.Start();
@@ -434,7 +439,7 @@ namespace FCT
             }
         }
 
-        public void writeReport(DataGridView data)
+        public void writeReport(DataGridView data, bool testResult)
         {
             string fileReportName = @"C:\DaeyoungVN\FCT\History\";
             DateTime dateNew = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 7, 30, 0);
@@ -464,6 +469,12 @@ namespace FCT
                 ProgramChange = false;
             }
 
+            String resultString = "FAIL";
+            if (result)
+            {
+                resultString = "PASS";
+            }
+
             if (!File.Exists(fileReportName + tbModelName.Text + ".txt"))
             {
                 string contents = "SN/Model/Result/Date/Time/";
@@ -473,7 +484,8 @@ namespace FCT
                         contents += data[1, i].Value.ToString() + "/";
                 }
                 contents += Environment.NewLine;
-                contents += NumberTotal + "/" + tbModelName.Text + "/" + labelFinalResult.Text + "/" + DateTime.Now.ToString("yyyy MM dd") + "/" + DateTime.Now.ToString("hh mm ss") + "/";
+
+                contents += NumberTotal + "/" + tbModelName.Text + "/" + resultString + "/" + DateTime.Now.ToString("yyyy MM dd") + "/" + DateTime.Now.ToString("hh mm ss") + "/";
 
                 for (int i = 0; i < data.RowCount - 1; i++)
                 {
@@ -485,7 +497,7 @@ namespace FCT
             }
             else
             {
-                string contents = NumberTotal + "/" + tbModelName.Text + "/" + labelFinalResult.Text + "/" + DateTime.Now.ToString("yyyy MM dd") + "/" + DateTime.Now.ToString("hh mm ss") + "/";
+                string contents = NumberTotal + "/" + tbModelName.Text + "/" + resultString + "/" + DateTime.Now.ToString("yyyy MM dd") + "/" + DateTime.Now.ToString("hh mm ss") + "/";
                 for (int i = 0; i < data.RowCount - 1; i++)
                 {
                     if (data[1, i].Value.ToString() != FUNCTION.Model)
@@ -827,13 +839,14 @@ namespace FCT
             {
                 MessageBox.Show("Port ready user by WT310");
             }
+            timerCheckCom.Start();
         }
 
 
 
         private void labelFinalResult_Click(object sender, EventArgs e)
         {
-            if (labelFinalResult.Text == "READY")
+            if (labelFinalResult.Text != "TESTING")
                 _MODEL.testDone = false;
             for (int i = 0; i < dgwStep.Rows.Count; i++)
             {
@@ -1167,16 +1180,8 @@ namespace FCT
                     }
                 case OFF_POWER_SOUCER:
                     {
-                        if (powerPort.IsOpen)
-                        {
-                            powerPort.Write("@");
-                            functionList.Rows[Row].Cells[4].Value = this.MAX.ToString();
-                            result = true;
-                        }
-                        else
-                        {
-                            result = false;
-                        }
+                        functionList.Rows[Row].Cells[4].Value = this.MAX.ToString();
+                        result = true;
                         break;
                     }
                 case NOP:

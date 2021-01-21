@@ -9,30 +9,38 @@ using System.IO.Ports;
 using System.Linq;
 using System.Management;
 using System.Management.Instrumentation;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using ZedGraph;
+using Label = System.Windows.Forms.Label;
 
 namespace FCT
 {
     public partial class FCT : Form
     {
+
+        public const string Version = "1.1.1";
+
+
         public WT310 WT310E = new WT310();
 
         public FCT_TESTER_MODEL _MODEL = new FCT_TESTER_MODEL();
 
-        public string[] funtionList = { FUNCTION.Model, FUNCTION.Delay, FUNCTION.Volt, FUNCTION.Ampe, FUNCTION.Watt, FUNCTION.WattMax, FUNCTION.NOP, FUNCTION.FREQUENCY, FUNCTION.OFF_POWER_SOUCER, FUNCTION.FINISH, FUNCTION.SAVE, FUNCTION.REPEAT };
+        public string[] funtionList = { FUNCTION.Model, FUNCTION.Delay, FUNCTION.Volt, FUNCTION.Ampe, FUNCTION.Watt, FUNCTION.WattMax,FUNCTION.WattMin ,FUNCTION.NOP, FUNCTION.FREQUENCY, FUNCTION.OFF_POWER_SOUCER, FUNCTION.FINISH, FUNCTION.SAVE, FUNCTION.REPEAT };
 
         public static SerialPort PowerSwitchPort;
 
         public int NumberOK = 0, NumberNG = 0, NumberTotal;
         public bool ProgramChange = false;
+        public bool startDrawGraph = false;
         public FCT()
         {
             InitializeComponent();
-
+            tsslbVersion.Text = "FCT Tester " + Version + "            ";
             string path = @"C:\DaeyoungVN\FCT\";
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
 
@@ -49,6 +57,7 @@ namespace FCT
             PortSwitch.DataReceived += PortSwitch_DataReceived;
             PowerSwitchPort = PortSwitch;
             timerCheckCom.Start();
+            timerDrawGrap.Start();
 
             clFunc.DataSource = funtionList;
 
@@ -62,6 +71,33 @@ namespace FCT
                 dgwStep[4, J].Value = 0;
             }
 
+
+            zGCpowerView.AxisChange();
+            zGCpowerView.Invalidate();
+
+            GraphPane myPane = zGCpowerView.GraphPane;
+            myPane.Title.Text = "";
+            myPane.XAxis.Title.Text = "Time (ms)";
+            myPane.YAxis.Title.Text = "W";
+
+            myPane.Fill = new Fill(Color.FromArgb(200, 200, 200));
+            myPane.Chart.Fill = new Fill(Color.Black, Color.Black);
+            myPane.XAxis.MajorGrid.Color = Color.FromArgb(90, 90, 90);
+            myPane.YAxis.MajorGrid.Color = Color.FromArgb(90, 90, 90);
+
+            RollingPointPairList list = new RollingPointPairList(60000);
+            LineItem curve = myPane.AddCurve("W", list, Color.Lime, SymbolType.None);
+
+            myPane.XAxis.Scale.Min = 0;
+            myPane.XAxis.Scale.Max = 5000;
+            myPane.XAxis.Scale.MinorStep = 10;
+            myPane.XAxis.Scale.MajorStep = 100;
+            myPane.YAxis.Scale.Min = 0;
+            myPane.YAxis.Scale.Max = 100;
+
+            zGCpowerView.AxisChange();
+            //Thread thread = new Thread(threadDraw);
+            //thread.Start();
             backgroundWorker.RunWorkerAsync();
         }
 
@@ -87,6 +123,8 @@ namespace FCT
             }
         }
 
+        DateTime startDraw = DateTime.Now;
+        Random rand = new Random();
         private void DataReciver(object obj, SerialDataReceivedEventArgs e)
         {
             if (!PortMachine.IsOpen) return;
@@ -99,7 +137,6 @@ namespace FCT
                     if (WT310E.GetFromString(Frame))
                     {
                         UpdateValue();
-                        timerGetValue.Start();
                     }
                 }));
             }
@@ -191,7 +228,14 @@ namespace FCT
             {
                 PortMachine.DiscardInBuffer();
                 PortMachine.Close();
-                //Environment.Exit(0);
+                try
+                {
+                    Environment.Exit(0);
+                }
+                catch (Exception)
+                {
+                    Environment.Exit(0);
+                }
                 this.Close();
                 Application.Exit();
             }
@@ -210,7 +254,7 @@ namespace FCT
             }
             else
             {
-                //this.MaximumSize = new System.Drawing.Size(Screen.PrimaryScreen.WorkingArea.Width + 20  , Screen.PrimaryScreen.WorkingArea.Height + 17);
+                this.MaximumSize = new System.Drawing.Size(Screen.PrimaryScreen.WorkingArea.Width + 20  , Screen.PrimaryScreen.WorkingArea.Height + 17);
                 this.WindowState = FormWindowState.Maximized;
             }
         }
@@ -316,10 +360,11 @@ namespace FCT
         private void Form1_Load(object sender, EventArgs e)
         {
             StartForm startForm = new StartForm();
-            startForm.ShowDialog();
+            //startForm.ShowDialog();
             timerUpdateChar.Start();
             timerGetValue.Start();
             PortMachine.Write(WT310.GETcontrol);
+
         }
 
         private void Form1_ResizeEnd(object sender, EventArgs e)
@@ -339,21 +384,27 @@ namespace FCT
         Color.White,
         };
 
-
-
         public void RunTest()
         {
             while (startTest)
             {
                 if (!_MODEL.testDone)
                 {
+                    zGCpowerView.Invoke(new MethodInvoker(delegate
+                    {
+                        ClearZedGraph();
+                        startDraw = DateTime.Now;
+                        startDrawGraph = true;
+                    }));
                     for (int J = 0; J < dgwStep.Rows.Count - 1; J++)
                     {
                         for (int columnCount = 0; columnCount < dgwStep.Columns.Count; columnCount++)
                         {
                             dgwStep[columnCount, J].Style.BackColor = colors[columnCount];
+                            dgwStep[columnCount, J].Style.ForeColor = Color.Black;
+                            dgwStep[columnCount, J].Style.SelectionBackColor = Color.FromArgb(118, 58, 118);
+                            dgwStep[columnCount, J].Style.SelectionForeColor = Color.White;
                         }
-                        dgwStep.Rows[J].DefaultCellStyle.ForeColor = Color.Black;
                         dgwStep[4, J].Value = 0;
                     }
                     TESTTING_label(labelFinalResult);
@@ -364,25 +415,23 @@ namespace FCT
                     {
                         if (_MODEL.FCT_FUN_QUEUE[i] != null)
                         {
-                            progressBar.Invoke(new MethodInvoker(delegate { progressBar.Value = i; }));
-                            dgwStep.Invoke(new MethodInvoker(delegate
-                            {
+                            progressBar.Invoke(new MethodInvoker(delegate { progressBar.Value = i;
                                 dgwStep.Rows[i].Selected = true;
-                                for (int J = 0; J < dgwStep.Rows.Count; J++)
-                                {
-                                    for (int columnCount = 0; columnCount < dgwStep.Columns.Count; columnCount++)
-                                    {
-                                        dgwStep[columnCount, J].Style.BackColor = colors[columnCount];
-                                    }
-
-                                    dgwStep.Rows[J].DefaultCellStyle.ForeColor = Color.Black;
-                                }
-                                for (int columnCount = 0; columnCount < dgwStep.Columns.Count; columnCount++)
-                                {
-                                    dgwStep[columnCount, i].Style.BackColor = Color.FromArgb(118, 58, 118);
-                                }
-                                dgwStep.Rows[i].DefaultCellStyle.ForeColor = Color.White;
                             }));
+
+                            //int J = i - 1;
+                            //    if (J < 0) J = dgwStep.Rows.Count - 2;
+                            //    for (int columnCount = 0; columnCount < dgwStep.Columns.Count; columnCount++)
+                            //    {
+                            //        dgwStep[columnCount, J].Style.BackColor = colors[columnCount];
+                            //    }
+                            //    dgwStep.Rows[J].DefaultCellStyle.ForeColor = Color.Black;
+                            //    for (int columnCount = 0; columnCount < dgwStep.Columns.Count; columnCount++)
+                            //    {
+                            //        dgwStep[columnCount, i].Style.BackColor = Color.FromArgb(118, 58, 118);
+                            //    }
+                            //    dgwStep.Rows[i].DefaultCellStyle.ForeColor = Color.White;
+                            //Thread.Sleep(150); // for graph update data
                             result = false;
                             while (!result)
                             {
@@ -420,17 +469,17 @@ namespace FCT
                         NumberNG++;
                     }
                     NumberTotal = NumberOK + NumberNG;
+                    
+                    startDrawGraph = false;
                     while (WT310E.Ampe > 0.2)
                     { }
                     writeReport(dgwStep, testResult);
+                    _MODEL.testDone = true;
                     dgwStep.Invoke(new MethodInvoker(delegate
                     {
-                        timerDelay.Start();
                         dgwStep.CurrentCell = dgwStep[0, 0];
                         textBoxHistory.AppendText(DateTime.Now.ToString("yyyy/MM/dd") + "   " + DateTime.Now.ToString("hh:mm:ss") + "   " + tbModelName.Text + "   " + labelFinalResult.Text + Environment.NewLine);
                     }));
-                    _MODEL.testDone = true;
-                    timerDelay.Start();
                 }
                 else
                 {
@@ -523,7 +572,7 @@ namespace FCT
         {
             label.Invoke(new MethodInvoker(delegate
             {
-                label.Text = "FAIL" + Environment.NewLine + Item;
+                label.Text = "FAIL - " + Item;
                 timerUpdateChar.Start();
                 CharCircle = 0;
             }));
@@ -576,20 +625,24 @@ namespace FCT
             }
 
             lbHz.Text = WT310E.Frequency.ToString("f3");
-
-
-            if (_MODEL.testDone && labelFinalResult.Text == "READY")
+            if (startDrawGraph)
             {
-                if (WT310E.Ampe > 1)
+                double realtime = DateTime.Now.Subtract(startDraw).TotalMilliseconds;
+                Draw(realtime, WT310E.Wat);
+            }
+            
+            if (_MODEL.testDone && labelFinalResult.Text != "TEST")
+            {
+                if (WT310E.Ampe > 2)
+                {
                     _MODEL.testDone = false;
+                }
                 WT310E.WattMax = 0;
                 for (int i = 0; i < dgwStep.Rows.Count; i++)
                 {
                     dgwStep.Rows[i].Selected = false;
                 }
-                startTest = true;
             }
-
         }
 
         private void timerGetValue_Tick(object sender, EventArgs e)
@@ -599,11 +652,6 @@ namespace FCT
                 PortMachine.Write(WT310.READvalue);
             }
             lbTime.Text = DateTime.Now.ToString("hh:mm t") + 'M';
-        }
-
-        private void timerExit_Tick(object sender, EventArgs e)
-        {
-            this.Close();
         }
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
@@ -685,7 +733,6 @@ namespace FCT
 
         private void backgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
-
             RunTest();
         }
 
@@ -842,12 +889,12 @@ namespace FCT
             timerCheckCom.Start();
         }
 
-
-
         private void labelFinalResult_Click(object sender, EventArgs e)
         {
-            if (labelFinalResult.Text != "TESTING")
+            if (labelFinalResult.Text != "TEST")
+            {
                 _MODEL.testDone = false;
+            }
             for (int i = 0; i < dgwStep.Rows.Count; i++)
             {
                 dgwStep.Rows[i].Selected = false;
@@ -876,6 +923,119 @@ namespace FCT
             catch (Exception) { }
         }
 
+        public void threadDraw()
+        {
+            while (true)
+            {
+                if (startDrawGraph)
+                {
+                    zGCpowerView.Invoke(new MethodInvoker(delegate
+                    {
+                        double realtime = DateTime.Now.Subtract(startDraw).TotalMilliseconds;
+                        if(Datas.Count >= 1)
+                            Draw(realtime, Datas[0]);
+                        if (Datas.Count >= 2)
+                            Datas.RemoveAt(0);
+                    }));
+                }
+            }
+        }
+
+        private void Draw(double realtime, double datas)
+        {
+
+            if (zGCpowerView.GraphPane.CurveList.Count <= 0)
+                return;
+
+            LineItem curve = zGCpowerView.GraphPane.CurveList[0] as LineItem;
+            curve.Line.Width = 2F;
+            if (curve == null)
+                return;
+
+            IPointListEdit list = curve.Points as IPointListEdit;
+
+            if (list == null)
+                return;
+            list.Add(realtime, datas); // Thêm điểm trên đồ thị
+
+            Scale xScale = zGCpowerView.GraphPane.XAxis.Scale;
+            Scale yScale = zGCpowerView.GraphPane.YAxis.Scale;
+
+            // Tự động Scale theo trục x
+            if (realtime > xScale.Max - xScale.MajorStep)
+            {
+                xScale.Max = realtime + xScale.MajorStep;
+                xScale.Min = xScale.Max - 5000;
+            }
+
+            // Tự động Scale theo trục y
+            if (datas > yScale.Max - yScale.MajorStep)
+            {
+                yScale.Max = datas + yScale.MajorStep;
+            }
+            else if (datas < yScale.Min + yScale.MajorStep)
+            {
+                yScale.Min = datas - yScale.MajorStep;
+            }
+
+            zGCpowerView.AxisChange();
+            zGCpowerView.Invalidate();
+            zGCpowerView.Refresh();
+            //RealTime.Add(realtime);
+            //Datas.Add(datas);
+            //try
+            //{
+            //    GraphPane Zd_Pen1 = zGCpowerView.GraphPane;
+            //    // Add Line to Graph
+            //    var pList = new PointPairList(RealTime.ToArray(), Datas.ToArray());
+            //    LineItem myCurve = Zd_Pen1.AddCurve("", pList, Color.LimeGreen, SymbolType.None);
+            //    myCurve.Line.Width = 1F;
+            //}
+            //catch (Exception ex)
+            //{
+            //    //Pub.log[(int)IDX_Log.Insp].AddE("DrawBEMFGraph: " + ex.ToString());
+            //}
+            //zGCpowerView.AxisChange();
+            //zGCpowerView.Invalidate();
+            //zGCpowerView.Refresh();
+        }
+        List<double> RealTime = new List<double>();
+        List<double> Datas = new List<double>();
+        // Xóa đồ thị, với ZedGraph thì phải khai báo lại như ở hàm Form1_Load, nếu không sẽ không hiển thị
+        private void ClearZedGraph()
+        {
+            RealTime.Clear();
+            Datas.Clear();
+
+            zGCpowerView.GraphPane.CurveList.Clear(); // Xóa đường
+            zGCpowerView.GraphPane.GraphObjList.Clear(); // Xóa đối tượng
+
+            zGCpowerView.AxisChange();
+            zGCpowerView.Invalidate();
+
+            GraphPane myPane = zGCpowerView.GraphPane;
+            myPane.Title.Text = "";
+            myPane.XAxis.Title.Text = "Time (ms)";
+            myPane.YAxis.Title.Text = "W";
+
+            myPane.Fill = new Fill(Color.FromArgb(200, 200, 200));
+            myPane.Chart.Fill = new Fill(Color.Black, Color.Black);
+            myPane.XAxis.MajorGrid.Color = Color.FromArgb(90, 90, 90);
+            myPane.YAxis.MajorGrid.Color = Color.FromArgb(90, 90, 90);
+
+            RollingPointPairList list = new RollingPointPairList(60000);
+            LineItem curve = myPane.AddCurve("W", list, Color.Lime, SymbolType.None);
+
+            myPane.XAxis.Scale.Min = 0;
+            myPane.XAxis.Scale.Max = 5000;
+            myPane.XAxis.Scale.MinorStep = 10;
+            myPane.XAxis.Scale.MajorStep = 100;
+            myPane.YAxis.Scale.Min = -100;
+            myPane.YAxis.Scale.Max = 100;
+
+            zGCpowerView.AxisChange();
+        }
+
     }
     public class WT310
     {
@@ -891,14 +1051,14 @@ namespace FCT
 
         public const string ENDline = "\r\n";
 
-        public double Volt = 0;
-        public double Ampe = 0;
-        public double Wat = 0;
-        public double WattMax = 0;
-        public double WattMin = 0;
-        public double Frequency = 0;
-        public double Delay = 0;
-        public int None = 0;
+        public double Volt { get; set; } = 0;
+        public double Ampe { get; set; } = 0;
+        public double Wat { get; set; } = 0;
+        public double WattMax { get; set; } = 0;
+        public double WattMin { get; set; } = 0;
+        public double Frequency { get; set; } = 0;
+        public double Delay { get; set; } = 0;
+        public int None { get; set; } = 0;
         public WT310() { }
 
         public bool GetFromString(string data)
@@ -923,6 +1083,8 @@ namespace FCT
                 return false;
             }
         }
+
+
     }
 
     public class FCT_TESTER_MODEL
@@ -1194,7 +1356,6 @@ namespace FCT
                     {
                         functionList.Rows[Row].Cells[4].Value = this.MAX.ToString();
                         result = true;
-
                         break;
                     }
             }

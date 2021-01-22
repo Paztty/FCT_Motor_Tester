@@ -23,20 +23,57 @@ namespace FCT
     public partial class FCT : Form
     {
 
-        public const string Version = "1.1.1";
+        public const string Version = "1.1.2";
 
-
+        #region Variable
         public WT310 WT310E = new WT310();
 
         public FCT_TESTER_MODEL _MODEL = new FCT_TESTER_MODEL();
 
-        public string[] funtionList = { FUNCTION.Model, FUNCTION.Delay, FUNCTION.Volt, FUNCTION.Ampe, FUNCTION.Watt, FUNCTION.WattMax,FUNCTION.WattMin ,FUNCTION.NOP, FUNCTION.FREQUENCY, FUNCTION.OFF_POWER_SOUCER, FUNCTION.FINISH, FUNCTION.SAVE, FUNCTION.REPEAT };
+        public string[] funtionList = { 
+                            FUNCTION.Model,
+                            FUNCTION.Delay,
+                            FUNCTION.Volt,
+                            FUNCTION.Ampe,
+                            FUNCTION.Watt,
+                            FUNCTION.WattMax,
+                            FUNCTION.WattMin,
+                            FUNCTION.NOP,
+                            FUNCTION.FREQUENCY,
+                            FUNCTION.OFF_POWER_SOUCER,
+                            FUNCTION.FINISH,
+                            FUNCTION.SAVE,
+                            FUNCTION.REPEAT };
 
         public static SerialPort PowerSwitchPort;
 
         public int NumberOK = 0, NumberNG = 0, NumberTotal;
+
         public bool ProgramChange = false;
+
         public bool startDrawGraph = false;
+
+        DateTime startDraw = DateTime.Now;
+
+        Random rand = new Random();
+
+        public int CharCircle = 0;
+
+        public bool result = false;
+
+        bool startTest = true;
+
+        // list color for data grid view columns color.
+        List<Color> colors = new List<Color>() {
+        Color.White,
+        Color.FromArgb(153, 187, 255),
+        Color.FromArgb(153, 255, 187),
+        Color.FromArgb(153, 255, 187),
+        Color.FromArgb(255, 221, 187),
+        Color.White,
+        };
+        #endregion
+
         public FCT()
         {
             InitializeComponent();
@@ -101,6 +138,195 @@ namespace FCT
             backgroundWorker.RunWorkerAsync();
         }
 
+        #region Form control  
+        public const int WM_NCLBUTTONDOWN = 0xA1;
+        public const int HT_CAPTION = 0x2;
+
+        [System.Runtime.InteropServices.DllImport("user32.dll")]
+        public static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
+        [System.Runtime.InteropServices.DllImport("user32.dll")]
+        public static extern bool ReleaseCapture();
+        private void pnTop_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                ReleaseCapture();
+                SendMessage(Handle, WM_NCLBUTTONDOWN, HT_CAPTION, 0);
+            }
+        }
+        private void btnMinimize_Click(object sender, EventArgs e)
+        {
+            this.WindowState = FormWindowState.Minimized;
+        }
+        private void btnClose_Click(object sender, EventArgs e)
+        {
+            string message = "Do you want to close this window?";
+            string title = "Close Window";
+            MessageBoxButtons buttons = MessageBoxButtons.YesNo;
+            DialogResult result = MessageBox.Show(message, title, buttons);
+            if (result == DialogResult.Yes)
+            {
+                if (PortMachine.IsOpen)
+                {
+                    PortMachine.DiscardInBuffer();
+                    PortMachine.Close();
+                }
+
+                if (PortSwitch.IsOpen)
+                {
+                    PortSwitch.Close();
+                }
+
+                try
+                {
+                    backgroundWorker.CancelAsync();
+                    Environment.Exit(0);
+                }
+                catch (Exception)
+                { }
+                this.Close();
+                Application.Exit();
+            }
+            else
+            {
+                // Do something  
+            }
+        }
+
+        private void btnMaximize_Click(object sender, EventArgs e)
+        {
+            if (WindowState == FormWindowState.Maximized)
+            {
+                this.WindowState = FormWindowState.Normal;
+            }
+            else
+            {
+                this.MaximumSize = new System.Drawing.Size(Screen.PrimaryScreen.WorkingArea.Width + 20, Screen.PrimaryScreen.WorkingArea.Height + 17);
+                this.WindowState = FormWindowState.Maximized;
+            }
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            this.MaximumSize = new System.Drawing.Size(Screen.PrimaryScreen.WorkingArea.Width + 20, Screen.PrimaryScreen.WorkingArea.Height + 17);
+            StartForm startForm = new StartForm();
+            startForm.ShowDialog();
+            timerUpdateChar.Start();
+            timerGetValue.Start();
+            PortMachine.Write(WT310.GETcontrol);
+
+        }
+
+        private void Form1_ResizeEnd(object sender, EventArgs e)
+        {
+            timerUpdateChar.Start();
+            CharCircle = 0;
+            dgwStep.Refresh();
+        }
+
+
+        #endregion
+
+        public bool login()
+        {
+            LoginForm login = new LoginForm();
+            login.ShowDialog();
+            if (login.DialogResult == DialogResult.OK)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        #region Pie Chart drawing
+        private void DrawChart(int okNumber, int ngNumber, int charCicle)
+        {
+            int Total = okNumber + ngNumber;
+            lbCounterNumberNG.Text = ngNumber.ToString();
+            lbCounterNumberOK.Text = okNumber.ToString();
+            lbCounterNumberTotal.Text = Total.ToString();
+            float persentOk;
+            if (Total > 0)
+                persentOk = (float)okNumber / (float)Total * 100;
+            else
+                persentOk = 0;
+            //lbCounterNumberDef.Text = persentOk.ToString("f1");
+
+            if (Total == 0) Total = 10000000;
+            float okRadian = (float)charCicle / Total * okNumber;
+            float ngRadian = (float)charCicle - okRadian;
+
+            int startRectY = pBChar.Size.Height / 2 - pBChar.Size.Width / 2;
+            int startRectX = pBChar.Size.Width / 2 - pBChar.Size.Height / 2;
+            int rectDimemtions = pBChar.Size.Width;
+
+            if (startRectY < 0)
+            {
+                startRectY = 0;
+                rectDimemtions = pBChar.Size.Height;
+            }
+            if (startRectX < 0)
+            {
+                startRectX = 0;
+                rectDimemtions = pBChar.Size.Width;
+            }
+
+            if (pBChar.Size.Width > 50 && pBChar.Size.Height > 50)
+            {
+                Rectangle rect = new Rectangle(startRectX, startRectY, rectDimemtions, rectDimemtions);
+                Rectangle rectInside = new Rectangle(startRectX + rectDimemtions / 4, startRectY + rectDimemtions / 4, rectDimemtions / 2, rectDimemtions / 2);
+                Bitmap custormChart = new Bitmap(pBChar.Size.Width, pBChar.Size.Height);
+                Graphics g = Graphics.FromImage(custormChart);
+
+                Color okColor = Color.FromArgb(30, 136, 221);
+                Color ngColor = Color.FromArgb(170, 0, 0);
+                Color bacgroudColor = Color.FromArgb(60, 60, 60);
+                SolidBrush brush = new SolidBrush(okColor);
+                SolidBrush brushNG = new SolidBrush(ngColor);
+                SolidBrush brushNumber = new SolidBrush(Color.White);
+                SolidBrush brushInside = new SolidBrush(bacgroudColor);
+
+                g.FillPie(brush, rect, 0, okRadian);
+                g.FillPie(brushNG, rect, okRadian, ngRadian);
+                g.FillPie(brushInside, rectInside, 0, 360);
+
+                string persenOkString = persentOk.ToString("F1") + " %";
+                Font persentOkFont = new Font("Microsoft YaHei UI", rectDimemtions / 14, FontStyle.Bold);
+                g.DrawString(persenOkString, persentOkFont, brushNumber, startRectX + rectDimemtions / 2 - (persenOkString.Length * 4 * rectDimemtions / 14 / 10), startRectY + rectDimemtions / 2 - rectDimemtions / 14);
+
+                if (pBChar.Image != null)
+                    pBChar.Image.Dispose();
+
+                pBChar.Image = custormChart;
+                brush.Dispose();
+                brushInside.Dispose();
+                brushNumber.Dispose();
+                g.Dispose();
+                //custormChart.Dispose();
+            }
+        }
+
+        private void timerUpdateChar_Tick(object sender, EventArgs e)
+        {
+            if (CharCircle <= 360)
+            {
+                DrawChart(NumberOK, NumberNG, CharCircle);
+                CharCircle = CharCircle + (360 - CharCircle) / 50 + 1;
+                timerUpdateChar.Start();
+            }
+            else
+            {
+                timerUpdateChar.Stop();
+                //timerUpdateChar.Dispose();
+            }
+        }
+
+        #endregion
+
+        #region Serial data, machine value
         private void PortSwitch_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
             if (!PortSwitch.IsOpen) return;
@@ -122,9 +348,6 @@ namespace FCT
                 }));
             }
         }
-
-        DateTime startDraw = DateTime.Now;
-        Random rand = new Random();
         private void DataReciver(object obj, SerialDataReceivedEventArgs e)
         {
             if (!PortMachine.IsOpen) return;
@@ -195,194 +418,111 @@ namespace FCT
                 }
             }
         }
+        #endregion
 
-        public const int WM_NCLBUTTONDOWN = 0xA1;
-        public const int HT_CAPTION = 0x2;
-
-        [System.Runtime.InteropServices.DllImport("user32.dll")]
-        public static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
-        [System.Runtime.InteropServices.DllImport("user32.dll")]
-        public static extern bool ReleaseCapture();
-
-        private void pnTop_MouseDown(object sender, MouseEventArgs e)
+        #region Label change
+        public void OK_label(Label label)
         {
-            if (e.Button == MouseButtons.Left)
+            label.Invoke(new MethodInvoker(delegate
             {
-                ReleaseCapture();
-                SendMessage(Handle, WM_NCLBUTTONDOWN, HT_CAPTION, 0);
-            }
-        }
-
-        private void btnMinimize_Click(object sender, EventArgs e)
-        {
-            this.WindowState = FormWindowState.Minimized;
-        }
-
-        private void btnClose_Click(object sender, EventArgs e)
-        {
-            string message = "Do you want to close this window?";
-            string title = "Close Window";
-            MessageBoxButtons buttons = MessageBoxButtons.YesNo;
-            DialogResult result = MessageBox.Show(message, title, buttons);
-            if (result == DialogResult.Yes)
-            {
-                PortMachine.DiscardInBuffer();
-                PortMachine.Close();
-                try
-                {
-                    Environment.Exit(0);
-                }
-                catch (Exception)
-                {
-                    Environment.Exit(0);
-                }
-                this.Close();
-                Application.Exit();
-            }
-            else
-            {
-                // Do something  
-            }
-
-        }
-
-        private void btnMaximize_Click(object sender, EventArgs e)
-        {
-            if (WindowState == FormWindowState.Maximized)
-            {
-                this.WindowState = FormWindowState.Normal;
-            }
-            else
-            {
-                this.MaximumSize = new System.Drawing.Size(Screen.PrimaryScreen.WorkingArea.Width + 20  , Screen.PrimaryScreen.WorkingArea.Height + 17);
-                this.WindowState = FormWindowState.Maximized;
-            }
-        }
-
-        public bool login()
-        {
-            LoginForm login = new LoginForm();
-            login.ShowDialog();
-            if (login.DialogResult == DialogResult.OK)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-
-        private void DrawChart(int okNumber, int ngNumber, int charCicle)
-        {
-            int Total = okNumber + ngNumber;
-
-            lbCounterNumberNG.Text = ngNumber.ToString();
-            lbCounterNumberOK.Text = okNumber.ToString();
-            lbCounterNumberTotal.Text = Total.ToString();
-            float persentOk;
-            if (Total > 0)
-                persentOk = (float)okNumber / (float)Total * 100;
-            else
-                persentOk = 0;
-            //lbCounterNumberDef.Text = persentOk.ToString("f1");
-
-            if (Total == 0) Total = 10000000;
-            float okRadian = (float)charCicle / Total * okNumber;
-            float ngRadian = (float)charCicle - okRadian;
-
-            int startRectY = pBChar.Size.Height / 2 - pBChar.Size.Width / 2;
-            int startRectX = pBChar.Size.Width / 2 - pBChar.Size.Height / 2;
-            int rectDimemtions = pBChar.Size.Width;
-
-            if (startRectY < 0)
-            {
-                startRectY = 0;
-                rectDimemtions = pBChar.Size.Height;
-            }
-            if (startRectX < 0)
-            {
-                startRectX = 0;
-                rectDimemtions = pBChar.Size.Width;
-            }
-
-            if (pBChar.Size.Width > 50 && pBChar.Size.Height > 50)
-            {
-                Rectangle rect = new Rectangle(startRectX, startRectY, rectDimemtions, rectDimemtions);
-                Rectangle rectInside = new Rectangle(startRectX + rectDimemtions / 4, startRectY + rectDimemtions / 4, rectDimemtions / 2, rectDimemtions / 2);
-                Bitmap custormChart = new Bitmap(pBChar.Size.Width, pBChar.Size.Height);
-                Graphics g = Graphics.FromImage(custormChart);
-
-                Color okColor = Color.FromArgb(30, 136, 221);
-                Color ngColor = Color.FromArgb(170, 0, 0);
-                Color bacgroudColor = Color.FromArgb(36, 36, 36);
-                SolidBrush brush = new SolidBrush(okColor);
-                SolidBrush brushNG = new SolidBrush(ngColor);
-                SolidBrush brushNumber = new SolidBrush(Color.White);
-                SolidBrush brushInside = new SolidBrush(bacgroudColor);
-
-                g.FillPie(brush, rect, 0, okRadian);
-                g.FillPie(brushNG, rect, okRadian, ngRadian);
-                g.FillPie(brushInside, rectInside, 0, 360);
-
-                string persenOkString = persentOk.ToString("F1") + " %";
-                Font persentOkFont = new Font("Microsoft YaHei UI", rectDimemtions / 14, FontStyle.Bold);
-                g.DrawString(persenOkString, persentOkFont, brushNumber, startRectX + rectDimemtions / 2 - (persenOkString.Length * 4 * rectDimemtions / 14 / 10), startRectY + rectDimemtions / 2 - rectDimemtions / 14);
-
-                if (pBChar.Image != null)
-                    pBChar.Image.Dispose();
-
-                pBChar.Image = custormChart;
-                brush.Dispose();
-                brushInside.Dispose();
-                brushNumber.Dispose();
-                g.Dispose();
-                //custormChart.Dispose();
-            }
-        }
-        public int CharCircle = 0;
-        private void timerUpdateChar_Tick(object sender, EventArgs e)
-        {
-            if (CharCircle <= 360)
-            {
-                DrawChart(NumberOK, NumberNG, CharCircle);
-                CharCircle = CharCircle + (360 - CharCircle) / 50 + 1;
+                label.Text = "OK";
                 timerUpdateChar.Start();
+                CharCircle = 0;
+            }));
+            label.BackColor = Color.FromArgb(4, 117, 24);
+            label.ForeColor = Color.White;
+        }
+        public void NG_label(Label label, string Item)
+        {
+            label.Invoke(new MethodInvoker(delegate
+            {
+                label.Text = "FAIL - " + Item;
+                timerUpdateChar.Start();
+                CharCircle = 0;
+            }));
+            label.BackColor = Color.FromArgb(170, 0, 0);
+            label.ForeColor = Color.Black;
+        }
+        public void TESTTING_label(Label label)
+        {
+            label.Invoke(new MethodInvoker(delegate { label.Text = "TEST"; }));
+            label.BackColor = Color.FromArgb(198, 198, 85);
+            label.ForeColor = Color.Black;
+        }
+        public void READY_label(Label label)
+        {
+            label.Invoke(new MethodInvoker(delegate { label.Text = "READY"; }));
+            label.BackColor = Color.FromArgb(0, 81, 136);
+            label.ForeColor = Color.White;
+        }
+        public void POWER_ON_label(Label label)
+        {
+            label.Invoke(new MethodInvoker(delegate { label.Text = "POWER ON"; }));
+            label.BackColor = Color.FromArgb(68, 0, 170);
+            label.ForeColor = Color.White;
+        }
+        #endregion
+
+        #region Main testing func
+        public void UpdateValue()
+        {
+            lbVol.Text = WT310E.Volt.ToString("f3");
+
+            if (WT310E.Ampe < 0.001)
+            {
+                lbAmpe.Text = (WT310E.Ampe * 1000).ToString("f3");
+                gbAmpe.Text = "Dòng điện (mA)";
             }
             else
             {
-                timerUpdateChar.Stop();
-                //timerUpdateChar.Dispose();
+                lbAmpe.Text = WT310E.Ampe.ToString("f3");
+                gbAmpe.Text = "Dòng điện (A)";
+            }
+
+            if (WT310E.Ampe < 0.001)
+            {
+                lbWat.Text = (WT310E.Wat * 1000).ToString("f3");
+                gbWat.Text = "Công suất (mW)";
+            }
+            else
+            {
+                lbWat.Text = WT310E.Wat.ToString("f3");
+                gbWat.Text = "Công suất (W)";
+            }
+
+            lbHz.Text = WT310E.Frequency.ToString("f3");
+            if (startDrawGraph)
+            {
+                double realtime = DateTime.Now.Subtract(startDraw).TotalMilliseconds;
+                Draw(realtime, WT310E.Wat);
+            }
+
+            if (_MODEL.testDone && labelFinalResult.Text != "TEST")
+            {
+                if (WT310E.Ampe > 2)
+                {
+                    _MODEL.testDone = false;
+                }
+                WT310E.WattMax = 0;
+                for (int i = 0; i < dgwStep.Rows.Count; i++)
+                {
+                    dgwStep.Rows[i].Selected = false;
+                }
             }
         }
 
-        private void Form1_Load(object sender, EventArgs e)
+        private void timerGetValue_Tick(object sender, EventArgs e)
         {
-            StartForm startForm = new StartForm();
-            //startForm.ShowDialog();
-            timerUpdateChar.Start();
-            timerGetValue.Start();
-            PortMachine.Write(WT310.GETcontrol);
-
+            if (PortMachine.IsOpen)
+            {
+                PortMachine.Write(WT310.READvalue);
+            }
+            lbTime.Text = DateTime.Now.ToString("hh:mm t") + 'M';
         }
-
-        private void Form1_ResizeEnd(object sender, EventArgs e)
+        private void backgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
-            timerUpdateChar.Start();
-            CharCircle = 0;
-            dgwStep.Refresh();
+            RunTest();
         }
-        public bool result = false;
-        bool startTest = true;
-        List<Color> colors = new List<Color>() {
-        Color.White,
-        Color.FromArgb(153, 187, 255),
-        Color.FromArgb(153, 255, 187),
-        Color.FromArgb(153, 255, 187),
-        Color.FromArgb(255, 221, 187),
-        Color.White,
-        };
 
         public void RunTest()
         {
@@ -415,23 +555,10 @@ namespace FCT
                     {
                         if (_MODEL.FCT_FUN_QUEUE[i] != null)
                         {
-                            progressBar.Invoke(new MethodInvoker(delegate { progressBar.Value = i;
+                            progressBar.Invoke(new MethodInvoker(delegate {
+                                progressBar.Value = i;
                                 dgwStep.Rows[i].Selected = true;
                             }));
-
-                            //int J = i - 1;
-                            //    if (J < 0) J = dgwStep.Rows.Count - 2;
-                            //    for (int columnCount = 0; columnCount < dgwStep.Columns.Count; columnCount++)
-                            //    {
-                            //        dgwStep[columnCount, J].Style.BackColor = colors[columnCount];
-                            //    }
-                            //    dgwStep.Rows[J].DefaultCellStyle.ForeColor = Color.Black;
-                            //    for (int columnCount = 0; columnCount < dgwStep.Columns.Count; columnCount++)
-                            //    {
-                            //        dgwStep[columnCount, i].Style.BackColor = Color.FromArgb(118, 58, 118);
-                            //    }
-                            //    dgwStep.Rows[i].DefaultCellStyle.ForeColor = Color.White;
-                            //Thread.Sleep(150); // for graph update data
                             result = false;
                             while (!result)
                             {
@@ -469,7 +596,7 @@ namespace FCT
                         NumberNG++;
                     }
                     NumberTotal = NumberOK + NumberNG;
-                    
+
                     startDrawGraph = false;
                     while (WT310E.Ampe > 0.2)
                     { }
@@ -487,7 +614,6 @@ namespace FCT
                 }
             }
         }
-
         public void writeReport(DataGridView data, bool testResult)
         {
             string fileReportName = @"C:\DaeyoungVN\FCT\History\";
@@ -556,104 +682,9 @@ namespace FCT
                 File.AppendAllText(fileReportName + tbModelName.Text + ".txt", contents);
             }
         }
+        #endregion
 
-        public void OK_label(Label label)
-        {
-            label.Invoke(new MethodInvoker(delegate
-            {
-                label.Text = "OK";
-                timerUpdateChar.Start();
-                CharCircle = 0;
-            }));
-            label.BackColor = Color.FromArgb(4, 117, 24);
-            label.ForeColor = Color.White;
-        }
-        public void NG_label(Label label, string Item)
-        {
-            label.Invoke(new MethodInvoker(delegate
-            {
-                label.Text = "FAIL - " + Item;
-                timerUpdateChar.Start();
-                CharCircle = 0;
-            }));
-            label.BackColor = Color.FromArgb(170, 0, 0);
-            label.ForeColor = Color.Black;
-        }
-        public void TESTTING_label(Label label)
-        {
-            label.Invoke(new MethodInvoker(delegate { label.Text = "TEST"; }));
-            label.BackColor = Color.FromArgb(198, 198, 85);
-            label.ForeColor = Color.Black;
-        }
-        public void READY_label(Label label)
-        {
-            label.Invoke(new MethodInvoker(delegate { label.Text = "READY"; }));
-            label.BackColor = Color.FromArgb(0, 81, 136);
-            label.ForeColor = Color.White;
-        }
-        public void POWER_ON_label(Label label)
-        {
-            label.Invoke(new MethodInvoker(delegate { label.Text = "POWER ON"; }));
-            label.BackColor = Color.FromArgb(68, 0, 170);
-            label.ForeColor = Color.White;
-        }
-
-        public void UpdateValue()
-        {
-            lbVol.Text = WT310E.Volt.ToString("f3");
-
-            if (WT310E.Ampe < 0.001)
-            {
-                lbAmpe.Text = (WT310E.Ampe * 1000).ToString("f3");
-                gbAmpe.Text = "Dòng điện (mA)";
-            }
-            else
-            {
-                lbAmpe.Text = WT310E.Ampe.ToString("f3");
-                gbAmpe.Text = "Dòng điện (A)";
-            }
-
-            if (WT310E.Ampe < 0.001)
-            {
-                lbWat.Text = (WT310E.Wat * 1000).ToString("f3");
-                gbWat.Text = "Công suất (mW)";
-            }
-            else
-            {
-                lbWat.Text = WT310E.Wat.ToString("f3");
-                gbWat.Text = "Công suất (W)";
-            }
-
-            lbHz.Text = WT310E.Frequency.ToString("f3");
-            if (startDrawGraph)
-            {
-                double realtime = DateTime.Now.Subtract(startDraw).TotalMilliseconds;
-                Draw(realtime, WT310E.Wat);
-            }
-            
-            if (_MODEL.testDone && labelFinalResult.Text != "TEST")
-            {
-                if (WT310E.Ampe > 2)
-                {
-                    _MODEL.testDone = false;
-                }
-                WT310E.WattMax = 0;
-                for (int i = 0; i < dgwStep.Rows.Count; i++)
-                {
-                    dgwStep.Rows[i].Selected = false;
-                }
-            }
-        }
-
-        private void timerGetValue_Tick(object sender, EventArgs e)
-        {
-            if (PortMachine.IsOpen)
-            {
-                PortMachine.Write(WT310.READvalue);
-            }
-            lbTime.Text = DateTime.Now.ToString("hh:mm t") + 'M';
-        }
-
+        #region toolStrip Menu
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (login())
@@ -681,12 +712,12 @@ namespace FCT
             tbModelName.Text = _MODEL.ModelName;
             tbMotor.Text = _MODEL.ModelMotor;
 
-            //dgwStep.Columns[0].HeaderCell.Style.BackColor = Color.FromArgb(255, 179, 128);
-            //dgwStep.Columns[1].HeaderCell.Style.BackColor = Color.FromArgb(102, 153, 255);
-            //dgwStep.Columns[2].HeaderCell.Style.BackColor = Color.FromArgb(102, 255, 153);
-            //dgwStep.Columns[3].HeaderCell.Style.BackColor = Color.FromArgb(204, 153, 255);
-            //dgwStep.Columns[4].HeaderCell.Style.BackColor = Color.FromArgb(255, 204, 153);
-            //dgwStep.Columns[5].HeaderCell.Style.BackColor = Color.FromArgb(102, 255, 255);
+            dgwStep.Columns[0].HeaderCell.Style.BackColor = Color.FromArgb(255, 179, 128);
+            dgwStep.Columns[1].HeaderCell.Style.BackColor = Color.FromArgb(102, 153, 255);
+            dgwStep.Columns[2].HeaderCell.Style.BackColor = Color.FromArgb(102, 255, 153);
+            dgwStep.Columns[3].HeaderCell.Style.BackColor = Color.FromArgb(204, 153, 255);
+            dgwStep.Columns[4].HeaderCell.Style.BackColor = Color.FromArgb(255, 204, 153);
+            dgwStep.Columns[5].HeaderCell.Style.BackColor = Color.FromArgb(102, 255, 255);
 
 
             for (int J = 0; J < dgwStep.Rows.Count - 1; J++)
@@ -699,43 +730,6 @@ namespace FCT
                 dgwStep[4, J].Value = 0;
             }
         }
-
-        private void dgwStep_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e)
-        {
-            string titleText = dgwStep.Columns[1].HeaderText;
-            if (titleText.Equals(""))
-            {
-                TextBox autoText = e.Control as TextBox;
-                if (autoText != null)
-                {
-                    autoText.AutoCompleteMode = AutoCompleteMode.Suggest;
-                    autoText.AutoCompleteSource = AutoCompleteSource.CustomSource;
-                    AutoCompleteStringCollection DataCollection = new AutoCompleteStringCollection();
-                    addItems(DataCollection);
-                    autoText.AutoCompleteCustomSource = DataCollection;
-                }
-            }
-        }
-
-        public void addItems(AutoCompleteStringCollection col)
-        {
-            for (int i = 0; i < funtionList.Length; i++)
-            {
-                col.Add(funtionList[i]);
-            }
-        }
-
-        private void timerDelay_Tick(object sender, EventArgs e)
-        {
-            if (_MODEL.testDone)
-                READY_label(labelFinalResult);
-        }
-
-        private void backgroundWorker_DoWork(object sender, DoWorkEventArgs e)
-        {
-            RunTest();
-        }
-
         private void quitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             string message = "Do you want to close this window?";
@@ -755,49 +749,6 @@ namespace FCT
                 // Do something  
             }
         }
-
-        private void dgwStep_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
-        {
-            if (Form.ModifierKeys == Keys.Control)
-            {
-                if (e.ColumnIndex == 0 && e.RowIndex < dgwStep.RowCount - 1)
-                {
-                    try
-                    {
-                        this.dgwStep.Rows.Insert(e.RowIndex + 1, dgwStep);
-                        dgwStep[1, e.RowIndex + 1].Value = dgwStep[1, e.RowIndex].Value;
-                        if (dgwStep[2, e.RowIndex].Value != null)
-                            dgwStep[2, e.RowIndex + 1].Value = dgwStep[2, e.RowIndex].Value;
-                        else
-                            dgwStep[2, e.RowIndex + 1].Value = 0;
-                        dgwStep[3, e.RowIndex + 1].Value = dgwStep[3, e.RowIndex].Value;
-                        dgwStep[4, e.RowIndex + 1].Value = dgwStep[4, e.RowIndex].Value;
-                        dgwStep[5, e.RowIndex + 1].Value = dgwStep[5, e.RowIndex].Value;
-
-                        for (int i = 0; i < dgwStep.RowCount; i++)
-                        {
-                            dgwStep[0, i].Value = i + 1;
-                        }
-                    }
-                    catch { }
-                }
-                else
-                {
-                    dgwStep.Rows.AddCopies(dgwStep.RowCount - 1, 1);
-                    dgwStep[1, e.RowIndex + 1].Value = dgwStep[1, e.RowIndex].Value;
-                    dgwStep[2, e.RowIndex + 1].Value = dgwStep[2, e.RowIndex].Value;
-                    dgwStep[3, e.RowIndex + 1].Value = dgwStep[3, e.RowIndex].Value;
-                    dgwStep[4, e.RowIndex + 1].Value = dgwStep[4, e.RowIndex].Value;
-                    dgwStep[5, e.RowIndex + 1].Value = dgwStep[5, e.RowIndex].Value;
-                    for (int i = 0; i < dgwStep.RowCount; i++)
-                    {
-                        dgwStep[0, i].Value = i + 1;
-                    }
-                }
-
-            }
-        }
-
         private void clearToolStripMenuItem_Click(object sender, EventArgs e)
         {
             NumberNG = 0;
@@ -819,18 +770,6 @@ namespace FCT
                 dgwStep.ReadOnly = false;
             }
         }
-
-        private void dgwStep_DataError(object sender, DataGridViewDataErrorEventArgs e)
-        {
-
-        }
-
-        private void viewToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Report report = new Report();
-            report.ShowDialog();
-        }
-
         private void tsccbMeterPort_Click(object sender, EventArgs e)
         {
             string[] portList = SerialPort.GetPortNames();
@@ -888,19 +827,37 @@ namespace FCT
             }
             timerCheckCom.Start();
         }
-
-        private void labelFinalResult_Click(object sender, EventArgs e)
+        private void viewToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (labelFinalResult.Text != "TEST")
+            Report report = new Report();
+            report.ShowDialog();
+        }
+        #endregion
+
+        #region Datagridview edit
+        private void dgwStep_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e)
+        {
+            string titleText = dgwStep.Columns[1].HeaderText;
+            if (titleText.Equals(""))
             {
-                _MODEL.testDone = false;
-            }
-            for (int i = 0; i < dgwStep.Rows.Count; i++)
-            {
-                dgwStep.Rows[i].Selected = false;
+                TextBox autoText = e.Control as TextBox;
+                if (autoText != null)
+                {
+                    autoText.AutoCompleteMode = AutoCompleteMode.Suggest;
+                    autoText.AutoCompleteSource = AutoCompleteSource.CustomSource;
+                    AutoCompleteStringCollection DataCollection = new AutoCompleteStringCollection();
+                    addItems(DataCollection);
+                    autoText.AutoCompleteCustomSource = DataCollection;
+                }
             }
         }
-
+        public void addItems(AutoCompleteStringCollection col)
+        {
+            for (int i = 0; i < funtionList.Length; i++)
+            {
+                col.Add(funtionList[i]);
+            }
+        }
         private void dgwStep_CellEndEdit(object sender, DataGridViewCellEventArgs e)
         {
             try
@@ -922,7 +879,74 @@ namespace FCT
             }
             catch (Exception) { }
         }
+        private void dgwStep_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            if (Form.ModifierKeys == Keys.Control)
+            {
+                if (e.ColumnIndex == 0 && e.RowIndex < dgwStep.RowCount - 1)
+                {
+                    try
+                    {
+                        this.dgwStep.Rows.Insert(e.RowIndex + 1, dgwStep);
+                        dgwStep[1, e.RowIndex + 1].Value = dgwStep[1, e.RowIndex].Value;
+                        if (dgwStep[2, e.RowIndex].Value != null)
+                            dgwStep[2, e.RowIndex + 1].Value = dgwStep[2, e.RowIndex].Value;
+                        else
+                            dgwStep[2, e.RowIndex + 1].Value = 0;
+                        dgwStep[3, e.RowIndex + 1].Value = dgwStep[3, e.RowIndex].Value;
+                        dgwStep[4, e.RowIndex + 1].Value = dgwStep[4, e.RowIndex].Value;
+                        dgwStep[5, e.RowIndex + 1].Value = dgwStep[5, e.RowIndex].Value;
 
+                        for (int i = 0; i < dgwStep.RowCount; i++)
+                        {
+                            dgwStep[0, i].Value = i + 1;
+                        }
+                    }
+                    catch { }
+                }
+                else
+                {
+                    dgwStep.Rows.AddCopies(dgwStep.RowCount - 1, 1);
+                    dgwStep[1, e.RowIndex + 1].Value = dgwStep[1, e.RowIndex].Value;
+                    dgwStep[2, e.RowIndex + 1].Value = dgwStep[2, e.RowIndex].Value;
+                    dgwStep[3, e.RowIndex + 1].Value = dgwStep[3, e.RowIndex].Value;
+                    dgwStep[4, e.RowIndex + 1].Value = dgwStep[4, e.RowIndex].Value;
+                    dgwStep[5, e.RowIndex + 1].Value = dgwStep[5, e.RowIndex].Value;
+                    for (int i = 0; i < dgwStep.RowCount; i++)
+                    {
+                        dgwStep[0, i].Value = i + 1;
+                    }
+                }
+
+            }
+        }
+        private void dgwStep_DataError(object sender, DataGridViewDataErrorEventArgs e)
+        {
+
+        }
+        #endregion
+
+        #region Label result action
+        private void labelFinalResult_Click(object sender, EventArgs e)
+        {
+            if (labelFinalResult.Text != "TEST")
+            {
+                _MODEL.testDone = false;
+            }
+            for (int i = 0; i < dgwStep.Rows.Count; i++)
+            {
+                dgwStep.Rows[i].Selected = false;
+            }
+        }
+
+        private void timerDelay_Tick(object sender, EventArgs e)
+        {
+            if (_MODEL.testDone)
+                READY_label(labelFinalResult);
+        }
+        #endregion
+
+        #region Graph draw
         public void threadDraw()
         {
             while (true)
@@ -932,7 +956,7 @@ namespace FCT
                     zGCpowerView.Invoke(new MethodInvoker(delegate
                     {
                         double realtime = DateTime.Now.Subtract(startDraw).TotalMilliseconds;
-                        if(Datas.Count >= 1)
+                        if (Datas.Count >= 1)
                             Draw(realtime, Datas[0]);
                         if (Datas.Count >= 2)
                             Datas.RemoveAt(0);
@@ -1035,11 +1059,14 @@ namespace FCT
 
             zGCpowerView.AxisChange();
         }
+        #endregion
+
 
     }
     public class WT310
     {
         public const string GETcontrol = ":COMMunicate:REMote ON\r\n";
+        public const string SETRate100ms = ":RATE 100MS\r\n";
         public const string READvalue = ":NUMERIC:NORMAL:VALUE?\r\n";
 
         public string Port = "COM1";
@@ -1083,8 +1110,6 @@ namespace FCT
                 return false;
             }
         }
-
-
     }
 
     public class FCT_TESTER_MODEL
@@ -1108,10 +1133,10 @@ namespace FCT
 
         public void Open(DataGridView functionList)
         {
-            OpenModel.DefaultExt = "fct";
+            OpenModel.DefaultExt = "*.fct";
             OpenModel.ShowDialog();
             string path = OpenModel.FileName;
-            if (path != "")
+            if (path != "" && Path.GetExtension(path) == ".fct")
             {
                 functionList.Rows.Clear();
                 string[] dataInLine;

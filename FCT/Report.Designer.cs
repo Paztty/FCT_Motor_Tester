@@ -156,6 +156,7 @@
             this.btClose.TabIndex = 7;
             this.btClose.Text = "Close";
             this.btClose.UseVisualStyleBackColor = false;
+            this.btClose.Click += new System.EventHandler(this.btClose_Click);
             // 
             // btApply
             // 

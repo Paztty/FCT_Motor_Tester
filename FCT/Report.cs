@@ -228,6 +228,11 @@ namespace FCT
                 startFilterTime = startFilterTime.AddDays(1);
             }
         }
+
+        private void btClose_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
     }
 
     public class reportColumn

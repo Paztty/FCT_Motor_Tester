@@ -176,11 +176,11 @@ namespace FCT
                 {
                     PortSwitch.Close();
                 }
-
+                Application.ExitThread();
                 try
                 {
                     backgroundWorker.CancelAsync();
-                    Environment.Exit(0);
+                    //Environment.Exit(0);
                 }
                 catch (Exception)
                 { }

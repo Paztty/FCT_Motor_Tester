@@ -96,6 +96,25 @@ namespace FCT
             timerCheckCom.Start();
             timerDrawGrap.Start();
 
+            if (File.Exists(path + "time.cfg"))
+            {
+                string[] dataConfig = File.ReadAllLines(path + "time.cfg");
+                try
+                {
+                    int timeResetLabel = Convert.ToInt32(dataConfig[0]);
+                    timerClearResultLabel.Interval = timeResetLabel;
+                }
+                catch (Exception)
+                {
+
+                }
+            }
+            else
+            {
+                string[] data = new string[] { timerClearResultLabel.Interval.ToString() };
+                File.WriteAllLines(path + "time.cfg", data);
+            }
+
             clFunc.DataSource = funtionList;
 
             for (int J = 0; J < dgwStep.Rows.Count - 1; J++)
@@ -126,9 +145,9 @@ namespace FCT
             LineItem curve = myPane.AddCurve("W", list, Color.Lime, SymbolType.None);
 
             myPane.XAxis.Scale.Min = 0;
-            myPane.XAxis.Scale.Max = 5000;
+            myPane.XAxis.Scale.Max = 9000;
             myPane.XAxis.Scale.MinorStep = 10;
-            myPane.XAxis.Scale.MajorStep = 100;
+            myPane.XAxis.Scale.MajorStep = 500;
             myPane.YAxis.Scale.Min = 0;
             myPane.YAxis.Scale.Max = 100;
 
@@ -470,27 +489,27 @@ namespace FCT
 
             if (WT310E.Ampe < 0.001)
             {
-                lbAmpe.Text = (WT310E.Ampe * 1000).ToString("f3");
+                lbAmpe.Text = (WT310E.Ampe * 1000).ToString("f1");
                 gbAmpe.Text = "Dòng điện (mA)";
             }
             else
             {
-                lbAmpe.Text = WT310E.Ampe.ToString("f3");
+                lbAmpe.Text = WT310E.Ampe.ToString("f1");
                 gbAmpe.Text = "Dòng điện (A)";
             }
 
             if (WT310E.Ampe < 0.001)
             {
-                lbWat.Text = (WT310E.Wat * 1000).ToString("f3");
+                lbWat.Text = (WT310E.Wat * 1000).ToString("f1");
                 gbWat.Text = "Công suất (mW)";
             }
             else
             {
-                lbWat.Text = WT310E.Wat.ToString("f3");
+                lbWat.Text = WT310E.Wat.ToString("f1");
                 gbWat.Text = "Công suất (W)";
             }
 
-            lbHz.Text = WT310E.Frequency.ToString("f3");
+            lbHz.Text = WT310E.Frequency.ToString("f1");
             if (startDrawGraph)
             {
                 double realtime = DateTime.Now.Subtract(startDraw).TotalMilliseconds;
@@ -600,10 +619,12 @@ namespace FCT
                     startDrawGraph = false;
                     while (WT310E.Ampe > 0.2)
                     { }
+                    
                     writeReport(dgwStep, testResult);
                     _MODEL.testDone = true;
                     dgwStep.Invoke(new MethodInvoker(delegate
                     {
+                        timerClearResultLabel.Start();
                         dgwStep.CurrentCell = dgwStep[0, 0];
                         textBoxHistory.AppendText(DateTime.Now.ToString("yyyy/MM/dd") + "   " + DateTime.Now.ToString("hh:mm:ss") + "   " + tbModelName.Text + "   " + labelFinalResult.Text + Environment.NewLine);
                     }));
@@ -989,7 +1010,7 @@ namespace FCT
             if (realtime > xScale.Max - xScale.MajorStep)
             {
                 xScale.Max = realtime + xScale.MajorStep;
-                xScale.Min = xScale.Max - 5000;
+                xScale.Min = xScale.Max - 9000;
             }
 
             // Tự động Scale theo trục y
@@ -1024,6 +1045,37 @@ namespace FCT
             //zGCpowerView.Refresh();
         }
         List<double> RealTime = new List<double>();
+
+        private void timerClearResultLabel_Tick(object sender, EventArgs e)
+        {
+            timerClearResultLabel.Stop();
+            if (labelFinalResult.Text != "READY")
+            {
+                READY_label(labelFinalResult);
+            }
+        }
+
+        private void tsTimerResetLabel_KeyPress(object sender, KeyEventArgs e)
+        {
+            LoginForm login = new LoginForm();
+
+            if (e.KeyCode == Keys.Enter)
+            {
+                if (login.ShowDialog() == DialogResult.OK)
+                {
+                    try
+                    {
+                        timerClearResultLabel.Interval = Convert.ToInt32(tsTimerResetLabel.Text);
+                        string[] data = new string[] { timerClearResultLabel.Interval.ToString() };
+                        File.WriteAllLines(@"C:\DaeyoungVN\FCT\" + "time.cfg", data);
+                    }
+                    catch (Exception)
+                    {}
+                }
+            }
+            
+        }
+
         List<double> Datas = new List<double>();
         // Xóa đồ thị, với ZedGraph thì phải khai báo lại như ở hàm Form1_Load, nếu không sẽ không hiển thị
         private void ClearZedGraph()
@@ -1051,9 +1103,9 @@ namespace FCT
             LineItem curve = myPane.AddCurve("W", list, Color.Lime, SymbolType.None);
 
             myPane.XAxis.Scale.Min = 0;
-            myPane.XAxis.Scale.Max = 5000;
+            myPane.XAxis.Scale.Max = 9000;
             myPane.XAxis.Scale.MinorStep = 10;
-            myPane.XAxis.Scale.MajorStep = 100;
+            myPane.XAxis.Scale.MajorStep = 500;
             myPane.YAxis.Scale.Min = -100;
             myPane.YAxis.Scale.Max = 100;
 

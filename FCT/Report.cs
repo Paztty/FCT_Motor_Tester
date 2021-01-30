@@ -203,6 +203,19 @@ namespace FCT
                 dataGridViewReport[0, i].Value = i + 1;
             }
             dataGridViewReport.Refresh();
+
+            lbCounterNumberTotal.Text = (dataGridViewReport.RowCount).ToString();
+            int numOK = 0;
+            int numNG = 0;
+            for (int i = 0; i < dataGridViewReport.RowCount; i++)
+            {
+                if (dataGridViewReport[2,i].Value.ToString() == "PASS")
+                {
+                    numOK++;
+                }
+            }
+            lbCounterNumberOK.Text = numOK.ToString();
+            lbCounterNumberNG.Text = (dataGridViewReport.RowCount - numOK).ToString();
         }
 
         private void dateTimePickerStart_ValueChanged(object sender, EventArgs e)

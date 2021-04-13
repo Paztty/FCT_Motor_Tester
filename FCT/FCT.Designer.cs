@@ -166,7 +166,7 @@ namespace FCT
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 46.22578F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 37.17172F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 16.56566F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 58F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 60F));
             this.tableLayoutPanel1.Controls.Add(this.groupBox2, 2, 2);
             this.tableLayoutPanel1.Controls.Add(this.groupBox1, 1, 2);
             this.tableLayoutPanel1.Controls.Add(this.pnTop, 0, 0);
@@ -201,9 +201,9 @@ namespace FCT
             this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.groupBox2.Font = new System.Drawing.Font("Microsoft YaHei UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.groupBox2.ForeColor = System.Drawing.Color.White;
-            this.groupBox2.Location = new System.Drawing.Point(730, 183);
+            this.groupBox2.Location = new System.Drawing.Point(729, 183);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(800, 136);
+            this.groupBox2.Size = new System.Drawing.Size(799, 136);
             this.groupBox2.TabIndex = 3;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Result";
@@ -217,7 +217,7 @@ namespace FCT
             this.labelFinalResult.Location = new System.Drawing.Point(3, 24);
             this.labelFinalResult.Margin = new System.Windows.Forms.Padding(0);
             this.labelFinalResult.Name = "labelFinalResult";
-            this.labelFinalResult.Size = new System.Drawing.Size(794, 109);
+            this.labelFinalResult.Size = new System.Drawing.Size(793, 109);
             this.labelFinalResult.TabIndex = 17;
             this.labelFinalResult.Text = "READY";
             this.labelFinalResult.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -233,7 +233,7 @@ namespace FCT
             this.groupBox1.Location = new System.Drawing.Point(36, 183);
             this.groupBox1.Name = "groupBox1";
             this.tableLayoutPanel1.SetRowSpan(this.groupBox1, 2);
-            this.groupBox1.Size = new System.Drawing.Size(688, 388);
+            this.groupBox1.Size = new System.Drawing.Size(687, 388);
             this.groupBox1.TabIndex = 3;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Step program";
@@ -285,7 +285,7 @@ namespace FCT
             this.dgwStep.RowTemplate.DefaultCellStyle.ForeColor = System.Drawing.Color.Black;
             this.dgwStep.RowTemplate.Height = 25;
             this.dgwStep.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgwStep.Size = new System.Drawing.Size(682, 361);
+            this.dgwStep.Size = new System.Drawing.Size(681, 361);
             this.dgwStep.StandardTab = true;
             this.dgwStep.TabIndex = 0;
             this.dgwStep.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgwStep_CellEndEdit);
@@ -377,7 +377,6 @@ namespace FCT
             this.tbModelName.TabIndex = 4;
             this.tbModelName.Text = "Model name";
             this.tbModelName.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            
             // 
             // pictureBox1
             // 
@@ -687,7 +686,7 @@ namespace FCT
             this.progressBar.Dock = System.Windows.Forms.DockStyle.Fill;
             this.progressBar.Location = new System.Drawing.Point(36, 708);
             this.progressBar.Name = "progressBar";
-            this.progressBar.Size = new System.Drawing.Size(1494, 14);
+            this.progressBar.Size = new System.Drawing.Size(1492, 14);
             this.progressBar.Step = 1;
             this.progressBar.TabIndex = 4;
             // 
@@ -710,7 +709,7 @@ namespace FCT
             this.tableLayoutPanel3.Padding = new System.Windows.Forms.Padding(5);
             this.tableLayoutPanel3.RowCount = 1;
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel3.Size = new System.Drawing.Size(1494, 100);
+            this.tableLayoutPanel3.Size = new System.Drawing.Size(1492, 100);
             this.tableLayoutPanel3.TabIndex = 5;
             // 
             // groupBox6
@@ -720,9 +719,9 @@ namespace FCT
             this.groupBox6.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.groupBox6.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.groupBox6.ForeColor = System.Drawing.Color.RoyalBlue;
-            this.groupBox6.Location = new System.Drawing.Point(1121, 8);
+            this.groupBox6.Location = new System.Drawing.Point(1118, 8);
             this.groupBox6.Name = "groupBox6";
-            this.groupBox6.Size = new System.Drawing.Size(365, 84);
+            this.groupBox6.Size = new System.Drawing.Size(366, 84);
             this.groupBox6.TabIndex = 3;
             this.groupBox6.TabStop = false;
             this.groupBox6.Text = "Frequency (Hz)";
@@ -734,7 +733,7 @@ namespace FCT
             this.lbHz.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbHz.Location = new System.Drawing.Point(3, 26);
             this.lbHz.Name = "lbHz";
-            this.lbHz.Size = new System.Drawing.Size(359, 55);
+            this.lbHz.Size = new System.Drawing.Size(360, 55);
             this.lbHz.TabIndex = 1;
             this.lbHz.Text = "50 Hz";
             this.lbHz.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -746,9 +745,9 @@ namespace FCT
             this.gbWat.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.gbWat.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.gbWat.ForeColor = System.Drawing.Color.Yellow;
-            this.gbWat.Location = new System.Drawing.Point(750, 8);
+            this.gbWat.Location = new System.Drawing.Point(748, 8);
             this.gbWat.Name = "gbWat";
-            this.gbWat.Size = new System.Drawing.Size(365, 84);
+            this.gbWat.Size = new System.Drawing.Size(364, 84);
             this.gbWat.TabIndex = 2;
             this.gbWat.TabStop = false;
             this.gbWat.Text = "Watt (mW)";
@@ -760,7 +759,7 @@ namespace FCT
             this.lbWat.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbWat.Location = new System.Drawing.Point(3, 26);
             this.lbWat.Name = "lbWat";
-            this.lbWat.Size = new System.Drawing.Size(359, 55);
+            this.lbWat.Size = new System.Drawing.Size(358, 55);
             this.lbWat.TabIndex = 1;
             this.lbWat.Text = "0.00";
             this.lbWat.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -772,9 +771,9 @@ namespace FCT
             this.gbAmpe.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.gbAmpe.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.gbAmpe.ForeColor = System.Drawing.Color.Green;
-            this.gbAmpe.Location = new System.Drawing.Point(379, 8);
+            this.gbAmpe.Location = new System.Drawing.Point(378, 8);
             this.gbAmpe.Name = "gbAmpe";
-            this.gbAmpe.Size = new System.Drawing.Size(365, 84);
+            this.gbAmpe.Size = new System.Drawing.Size(364, 84);
             this.gbAmpe.TabIndex = 1;
             this.gbAmpe.TabStop = false;
             this.gbAmpe.Text = "Ampe (mA)";
@@ -786,7 +785,7 @@ namespace FCT
             this.lbAmpe.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbAmpe.Location = new System.Drawing.Point(3, 26);
             this.lbAmpe.Name = "lbAmpe";
-            this.lbAmpe.Size = new System.Drawing.Size(359, 55);
+            this.lbAmpe.Size = new System.Drawing.Size(358, 55);
             this.lbAmpe.TabIndex = 1;
             this.lbAmpe.Text = "0.00";
             this.lbAmpe.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -800,7 +799,7 @@ namespace FCT
             this.groupBox3.ForeColor = System.Drawing.Color.Red;
             this.groupBox3.Location = new System.Drawing.Point(8, 8);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(365, 84);
+            this.groupBox3.Size = new System.Drawing.Size(364, 84);
             this.groupBox3.TabIndex = 0;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Volt (V)";
@@ -812,7 +811,7 @@ namespace FCT
             this.lbVol.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbVol.Location = new System.Drawing.Point(3, 26);
             this.lbVol.Name = "lbVol";
-            this.lbVol.Size = new System.Drawing.Size(359, 55);
+            this.lbVol.Size = new System.Drawing.Size(358, 55);
             this.lbVol.TabIndex = 0;
             this.lbVol.Text = "0.00";
             this.lbVol.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -895,7 +894,7 @@ namespace FCT
             this.lbTime.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lbTime.Font = new System.Drawing.Font("Microsoft YaHei UI", 24F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbTime.ForeColor = System.Drawing.Color.White;
-            this.lbTime.Location = new System.Drawing.Point(1288, 574);
+            this.lbTime.Location = new System.Drawing.Point(1286, 574);
             this.lbTime.Name = "lbTime";
             this.lbTime.Size = new System.Drawing.Size(242, 131);
             this.lbTime.TabIndex = 8;
@@ -908,7 +907,7 @@ namespace FCT
             this.tableLayoutPanel1.SetColumnSpan(this.zGCpowerView, 2);
             this.zGCpowerView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.zGCpowerView.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(192)))));
-            this.zGCpowerView.Location = new System.Drawing.Point(732, 327);
+            this.zGCpowerView.Location = new System.Drawing.Point(731, 327);
             this.zGCpowerView.Margin = new System.Windows.Forms.Padding(5);
             this.zGCpowerView.Name = "zGCpowerView";
             this.zGCpowerView.ScrollGrace = 0D;
@@ -918,7 +917,7 @@ namespace FCT
             this.zGCpowerView.ScrollMinX = 0D;
             this.zGCpowerView.ScrollMinY = 0D;
             this.zGCpowerView.ScrollMinY2 = 0D;
-            this.zGCpowerView.Size = new System.Drawing.Size(796, 242);
+            this.zGCpowerView.Size = new System.Drawing.Size(795, 242);
             this.zGCpowerView.TabIndex = 9;
             this.zGCpowerView.UseExtendedPrintDialog = true;
             // 
@@ -931,7 +930,7 @@ namespace FCT
             this.gbHistory.ForeColor = System.Drawing.Color.White;
             this.gbHistory.Location = new System.Drawing.Point(36, 577);
             this.gbHistory.Name = "gbHistory";
-            this.gbHistory.Size = new System.Drawing.Size(688, 125);
+            this.gbHistory.Size = new System.Drawing.Size(687, 125);
             this.gbHistory.TabIndex = 6;
             this.gbHistory.TabStop = false;
             this.gbHistory.Text = "History";
@@ -946,7 +945,7 @@ namespace FCT
             this.textBoxHistory.Multiline = true;
             this.textBoxHistory.Name = "textBoxHistory";
             this.textBoxHistory.ShortcutsEnabled = false;
-            this.textBoxHistory.Size = new System.Drawing.Size(682, 98);
+            this.textBoxHistory.Size = new System.Drawing.Size(681, 98);
             this.textBoxHistory.TabIndex = 0;
             // 
             // gbStatitsis
@@ -956,9 +955,9 @@ namespace FCT
             this.gbStatitsis.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.gbStatitsis.Font = new System.Drawing.Font("Microsoft YaHei UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.gbStatitsis.ForeColor = System.Drawing.Color.White;
-            this.gbStatitsis.Location = new System.Drawing.Point(730, 577);
+            this.gbStatitsis.Location = new System.Drawing.Point(729, 577);
             this.gbStatitsis.Name = "gbStatitsis";
-            this.gbStatitsis.Size = new System.Drawing.Size(552, 125);
+            this.gbStatitsis.Size = new System.Drawing.Size(551, 125);
             this.gbStatitsis.TabIndex = 2;
             this.gbStatitsis.TabStop = false;
             this.gbStatitsis.Text = "Statitics";
@@ -983,7 +982,7 @@ namespace FCT
             this.tableLayoutPanel4.RowCount = 2;
             this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel4.Size = new System.Drawing.Size(546, 98);
+            this.tableLayoutPanel4.Size = new System.Drawing.Size(545, 98);
             this.tableLayoutPanel4.TabIndex = 1;
             // 
             // lbCounterNumberTotal
@@ -995,7 +994,7 @@ namespace FCT
             this.lbCounterNumberTotal.Location = new System.Drawing.Point(3, 52);
             this.lbCounterNumberTotal.Margin = new System.Windows.Forms.Padding(3);
             this.lbCounterNumberTotal.Name = "lbCounterNumberTotal";
-            this.lbCounterNumberTotal.Size = new System.Drawing.Size(109, 43);
+            this.lbCounterNumberTotal.Size = new System.Drawing.Size(108, 43);
             this.lbCounterNumberTotal.TabIndex = 4;
             this.lbCounterNumberTotal.Text = "Total number";
             this.lbCounterNumberTotal.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1009,7 +1008,7 @@ namespace FCT
             this.label3.Location = new System.Drawing.Point(3, 3);
             this.label3.Margin = new System.Windows.Forms.Padding(3);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(109, 43);
+            this.label3.Size = new System.Drawing.Size(108, 43);
             this.label3.TabIndex = 3;
             this.label3.Text = "Total";
             this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1018,11 +1017,11 @@ namespace FCT
             // 
             this.pBChar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(60)))), ((int)(((byte)(60)))));
             this.pBChar.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pBChar.Location = new System.Drawing.Point(356, 0);
+            this.pBChar.Location = new System.Drawing.Point(353, 0);
             this.pBChar.Margin = new System.Windows.Forms.Padding(0);
             this.pBChar.Name = "pBChar";
             this.tableLayoutPanel4.SetRowSpan(this.pBChar, 2);
-            this.pBChar.Size = new System.Drawing.Size(190, 98);
+            this.pBChar.Size = new System.Drawing.Size(192, 98);
             this.pBChar.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pBChar.TabIndex = 9;
             this.pBChar.TabStop = false;
@@ -1033,10 +1032,10 @@ namespace FCT
             this.lbCounterNumberNG.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lbCounterNumberNG.Font = new System.Drawing.Font("Microsoft YaHei UI", 10F, System.Drawing.FontStyle.Bold);
             this.lbCounterNumberNG.ForeColor = System.Drawing.Color.Red;
-            this.lbCounterNumberNG.Location = new System.Drawing.Point(242, 52);
+            this.lbCounterNumberNG.Location = new System.Drawing.Point(240, 52);
             this.lbCounterNumberNG.Margin = new System.Windows.Forms.Padding(3);
             this.lbCounterNumberNG.Name = "lbCounterNumberNG";
-            this.lbCounterNumberNG.Size = new System.Drawing.Size(111, 43);
+            this.lbCounterNumberNG.Size = new System.Drawing.Size(110, 43);
             this.lbCounterNumberNG.TabIndex = 8;
             this.lbCounterNumberNG.Text = "NG number";
             this.lbCounterNumberNG.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1047,10 +1046,10 @@ namespace FCT
             this.label13.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label13.Font = new System.Drawing.Font("Microsoft YaHei UI", 10F, System.Drawing.FontStyle.Bold);
             this.label13.ForeColor = System.Drawing.Color.White;
-            this.label13.Location = new System.Drawing.Point(242, 3);
+            this.label13.Location = new System.Drawing.Point(240, 3);
             this.label13.Margin = new System.Windows.Forms.Padding(3);
             this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(111, 43);
+            this.label13.Size = new System.Drawing.Size(110, 43);
             this.label13.TabIndex = 7;
             this.label13.Text = "NG";
             this.label13.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1061,10 +1060,10 @@ namespace FCT
             this.lbCounterNumberOK.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lbCounterNumberOK.Font = new System.Drawing.Font("Microsoft YaHei UI", 10F, System.Drawing.FontStyle.Bold);
             this.lbCounterNumberOK.ForeColor = System.Drawing.Color.Lime;
-            this.lbCounterNumberOK.Location = new System.Drawing.Point(118, 52);
+            this.lbCounterNumberOK.Location = new System.Drawing.Point(117, 52);
             this.lbCounterNumberOK.Margin = new System.Windows.Forms.Padding(3);
             this.lbCounterNumberOK.Name = "lbCounterNumberOK";
-            this.lbCounterNumberOK.Size = new System.Drawing.Size(118, 43);
+            this.lbCounterNumberOK.Size = new System.Drawing.Size(117, 43);
             this.lbCounterNumberOK.TabIndex = 6;
             this.lbCounterNumberOK.Text = "OK number";
             this.lbCounterNumberOK.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1075,10 +1074,10 @@ namespace FCT
             this.label8.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label8.Font = new System.Drawing.Font("Microsoft YaHei UI", 10F, System.Drawing.FontStyle.Bold);
             this.label8.ForeColor = System.Drawing.Color.White;
-            this.label8.Location = new System.Drawing.Point(118, 3);
+            this.label8.Location = new System.Drawing.Point(117, 3);
             this.label8.Margin = new System.Windows.Forms.Padding(3);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(118, 43);
+            this.label8.Size = new System.Drawing.Size(117, 43);
             this.label8.TabIndex = 5;
             this.label8.Text = "OK";
             this.label8.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1107,6 +1106,7 @@ namespace FCT
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "FCT";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FCT_FormClosing);
             this.Load += new System.EventHandler(this.Form1_Load);
             this.ResizeEnd += new System.EventHandler(this.Form1_ResizeEnd);
             this.tableLayoutPanel1.ResumeLayout(false);

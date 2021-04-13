@@ -23,14 +23,14 @@ namespace FCT
     public partial class FCT : Form
     {
 
-        public const string Version = "1.1.2";
+        public const string Version = "1.3.0";
 
         #region Variable
         public WT310 WT310E = new WT310();
 
         public FCT_TESTER_MODEL _MODEL = new FCT_TESTER_MODEL();
 
-        public string[] funtionList = { 
+        public string[] funtionList = {
                             FUNCTION.Model,
                             FUNCTION.Delay,
                             FUNCTION.Volt,
@@ -43,7 +43,9 @@ namespace FCT
                             FUNCTION.OFF_POWER_SOUCER,
                             FUNCTION.FINISH,
                             FUNCTION.SAVE,
-                            FUNCTION.REPEAT };
+                            FUNCTION.REPEAT,
+                            FUNCTION.TIMEOUT
+        };
 
         public static SerialPort PowerSwitchPort;
 
@@ -152,9 +154,6 @@ namespace FCT
             myPane.YAxis.Scale.Max = 100;
 
             zGCpowerView.AxisChange();
-            //Thread thread = new Thread(threadDraw);
-            //thread.Start();
-            backgroundWorker.RunWorkerAsync();
         }
 
         #region Form control  
@@ -185,6 +184,8 @@ namespace FCT
             DialogResult result = MessageBox.Show(message, title, buttons);
             if (result == DialogResult.Yes)
             {
+                timerGetValue.Dispose();
+                startTest = false;
                 if (PortMachine.IsOpen)
                 {
                     PortMachine.DiscardInBuffer();
@@ -195,16 +196,7 @@ namespace FCT
                 {
                     PortSwitch.Close();
                 }
-                Application.ExitThread();
-                try
-                {
-                    backgroundWorker.CancelAsync();
-                    //Environment.Exit(0);
-                }
-                catch (Exception)
-                { }
                 this.Close();
-                Application.Exit();
             }
             else
             {
@@ -230,9 +222,14 @@ namespace FCT
             this.MaximumSize = new System.Drawing.Size(Screen.PrimaryScreen.WorkingArea.Width + 20, Screen.PrimaryScreen.WorkingArea.Height + 17);
             StartForm startForm = new StartForm();
             startForm.ShowDialog();
+
             timerUpdateChar.Start();
             timerGetValue.Start();
             PortMachine.Write(WT310.GETcontrol);
+
+            Thread thread = new Thread(update_date_time);
+            thread.IsBackground = true;
+            thread.Start();
 
         }
 
@@ -437,6 +434,14 @@ namespace FCT
                 }
             }
         }
+
+        public void update_date_time()
+        {
+            lbTime.Invoke(new MethodInvoker(delegate
+            {
+                lbTime.Text = DateTime.Now.ToString("hh:mm t") + 'M';
+            }));
+        }
         #endregion
 
         #region Label change
@@ -490,23 +495,23 @@ namespace FCT
             if (WT310E.Ampe < 0.001)
             {
                 lbAmpe.Text = (WT310E.Ampe * 1000).ToString("f1");
-                gbAmpe.Text = "Dòng điện (mA)";
+                gbAmpe.Text = "Ampe (mA)";
             }
             else
             {
                 lbAmpe.Text = WT310E.Ampe.ToString("f1");
-                gbAmpe.Text = "Dòng điện (A)";
+                gbAmpe.Text = "Ampe (A)";
             }
 
             if (WT310E.Ampe < 0.001)
             {
                 lbWat.Text = (WT310E.Wat * 1000).ToString("f1");
-                gbWat.Text = "Công suất (mW)";
+                gbWat.Text = "Watt (mW)";
             }
             else
             {
                 lbWat.Text = WT310E.Wat.ToString("f1");
-                gbWat.Text = "Công suất (W)";
+                gbWat.Text = "Watt (W)";
             }
 
             lbHz.Text = WT310E.Frequency.ToString("f1");
@@ -521,6 +526,7 @@ namespace FCT
                 if (WT310E.Ampe > 2)
                 {
                     _MODEL.testDone = false;
+                    backgroundWorker.RunWorkerAsync();
                 }
                 WT310E.WattMax = 0;
                 for (int i = 0; i < dgwStep.Rows.Count; i++)
@@ -536,8 +542,9 @@ namespace FCT
             {
                 PortMachine.Write(WT310.READvalue);
             }
-            lbTime.Text = DateTime.Now.ToString("hh:mm t") + 'M';
         }
+
+
         private void backgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             RunTest();
@@ -545,8 +552,6 @@ namespace FCT
 
         public void RunTest()
         {
-            while (startTest)
-            {
                 if (!_MODEL.testDone)
                 {
                     zGCpowerView.Invoke(new MethodInvoker(delegate
@@ -569,12 +574,13 @@ namespace FCT
                     TESTTING_label(labelFinalResult);
                     int retry = 0;
                     bool testResult = false;
-                    progressBar.Invoke(new MethodInvoker(delegate { progressBar.Maximum = dgwStep.RowCount - 1; }));
+                    progressBar.Invoke(new MethodInvoker(delegate { progressBar.Maximum = dgwStep.RowCount - 2; }));
                     for (int i = 0; i < dgwStep.Rows.Count - 1; i++)
                     {
                         if (_MODEL.FCT_FUN_QUEUE[i] != null)
                         {
-                            progressBar.Invoke(new MethodInvoker(delegate {
+                            progressBar.Invoke(new MethodInvoker(delegate
+                            {
                                 progressBar.Value = i;
                                 dgwStep.Rows[i].Selected = true;
                             }));
@@ -619,7 +625,7 @@ namespace FCT
                     startDrawGraph = false;
                     while (WT310E.Ampe > 0.2)
                     { }
-                    
+
                     writeReport(dgwStep, testResult);
                     _MODEL.testDone = true;
                     dgwStep.Invoke(new MethodInvoker(delegate
@@ -631,9 +637,8 @@ namespace FCT
                 }
                 else
                 {
-                    Thread.Sleep(250);
+                    Thread.Sleep(100);
                 }
-            }
         }
         public void writeReport(DataGridView data, bool testResult)
         {
@@ -759,6 +764,7 @@ namespace FCT
             DialogResult result = MessageBox.Show(message, title, buttons);
             if (result == DialogResult.Yes)
             {
+                startTest = false;
                 PortMachine.DiscardInBuffer();
                 PortMachine.Close();
                 Environment.Exit(0);
@@ -883,6 +889,7 @@ namespace FCT
         {
             try
             {
+                _MODEL.testDone = true;
                 for (int i = 0; i < dgwStep.RowCount - 1; i++)
                 {
                     if (_MODEL.FCT_FUN_QUEUE[i] != null)
@@ -950,10 +957,8 @@ namespace FCT
         #region Label result action
         private void labelFinalResult_Click(object sender, EventArgs e)
         {
-            if (labelFinalResult.Text != "TEST")
-            {
                 _MODEL.testDone = false;
-            }
+                backgroundWorker.RunWorkerAsync();
             for (int i = 0; i < dgwStep.Rows.Count; i++)
             {
                 dgwStep.Rows[i].Selected = false;
@@ -1049,7 +1054,7 @@ namespace FCT
         private void timerClearResultLabel_Tick(object sender, EventArgs e)
         {
             timerClearResultLabel.Stop();
-            if (labelFinalResult.Text != "READY")
+            if (labelFinalResult.Text != "TEST")
             {
                 READY_label(labelFinalResult);
             }
@@ -1070,10 +1075,15 @@ namespace FCT
                         File.WriteAllLines(@"C:\DaeyoungVN\FCT\" + "time.cfg", data);
                     }
                     catch (Exception)
-                    {}
+                    { }
                 }
             }
-            
+
+        }
+
+        private void FCT_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            Environment.Exit(Environment.ExitCode);
         }
 
         List<double> Datas = new List<double>();
@@ -1138,6 +1148,8 @@ namespace FCT
         public double Frequency { get; set; } = 0;
         public double Delay { get; set; } = 0;
         public int None { get; set; } = 0;
+        public bool endCycle = false;
+        public int timeOut = 4000;
         public WT310() { }
 
         public bool GetFromString(string data)
@@ -1153,8 +1165,15 @@ namespace FCT
                 else if (splitData[2] == "INF") this.Wat = 0;
                 if (splitData[3] != "NAN" && splitData[3] != "INF") this.Frequency = Convert.ToDouble(splitData[3]); //.Substring(0, splitData[3].IndexOf('E'))) * Math.Pow(10, Convert.ToDouble(splitData[3].Substring(splitData[3].IndexOf('E') + 1)));
                 else if (splitData[3] == "INF") this.Frequency = 0;
+
                 if (this.Wat > this.WattMax) this.WattMax = this.Wat;
+
                 if (this.Wat < this.WattMin) this.WattMin = this.Wat;
+
+                if (this.Wat - this.WattMin >= 100)
+                {
+                    endCycle = true;
+                }
                 return true;
             }
             else
@@ -1297,7 +1316,7 @@ namespace FCT
     public class FUNCTION
     {
         public const string Model = "MODEL";
-        public const string Delay = "TIMER";
+        public const string Delay = "DELAY";
         public const string Volt = "V";
         public const string Ampe = "A";
         public const string Watt = "W";
@@ -1306,9 +1325,10 @@ namespace FCT
         public const string NOP = "NOP";
         public const string FREQUENCY = "HZ";
         public const string OFF_POWER_SOUCER = "TURN OFF";
-        public const string FINISH = "FINISH";
+        public const string FINISH = "END";
         public const string SAVE = "SAVE";
         public const string REPEAT = "REPEAT";
+        public const string TIMEOUT = "TIME OUT";
 
         public SerialPort powerPort;
 
@@ -1346,6 +1366,13 @@ namespace FCT
                         result = true;
                         break;
                     }
+                case TIMEOUT:
+                    {
+                        functionList.Rows[Row].Cells[4].Value = this.MAX.ToString();
+                        value.timeOut = (int)this.MAX;
+                        result = true;
+                        break;
+                    }
                 case Delay:
                     {
                         for (int i = 0; i < this.MAX * 1000 / 100; i++)
@@ -1354,6 +1381,9 @@ namespace FCT
                             Thread.Sleep(100);
                         }
                         functionList.Rows[Row].Cells[4].Value = this.MAX.ToString();
+                        value.WattMin = 5000;
+                        value.WattMax = 0;
+                        value.endCycle = false;
                         result = true;
                         break;
                     }
@@ -1406,10 +1436,20 @@ namespace FCT
                             result = true;
                         else
                             result = false;
+
                         break;
                     }
                 case WattMin:
                     {
+                        DateTime start = DateTime.Now;
+                        while (!value.endCycle)
+                        {
+                            functionList.Rows[Row].Cells[4].Value = value.WattMin.ToString();
+                            if (DateTime.Now.Subtract(start).TotalMilliseconds > value.timeOut)
+                            {
+                                break;
+                            }
+                        }
                         functionList.Rows[Row].Cells[4].Value = value.WattMin.ToString();
                         if (value.WattMin >= this.MIN && value.WattMin <= this.MAX)
                             result = true;
@@ -1425,7 +1465,9 @@ namespace FCT
                     }
                 case NOP:
                     {
-                        value.WattMin = 500;
+                        value.WattMin = 5000;
+                        value.WattMax = 0;
+                        value.endCycle = false;
                         result = true;
                         break;
                     }

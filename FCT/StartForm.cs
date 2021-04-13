@@ -98,9 +98,9 @@ namespace FCT
             {
                 lbHello.Text += Hello_Contens[hello_number][i];
                 if (Hello_Contens[hello_number][i] == '.')
-                    timerAnimation.Interval = 1000;
+                    timerAnimation.Interval = 100;
                 else
-                    timerAnimation.Interval = 50;
+                    timerAnimation.Interval = 5;
             }
             else
             {
@@ -109,7 +109,6 @@ namespace FCT
 
             if(timerAnimation.Interval == Hello_Contens[hello_number].Length * 100)
                 this.DialogResult = DialogResult.OK;
-
             i++;
         }
     }

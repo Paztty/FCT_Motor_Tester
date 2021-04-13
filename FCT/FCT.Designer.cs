@@ -1106,7 +1106,6 @@ namespace FCT
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "FCT";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FCT_FormClosing);
             this.Load += new System.EventHandler(this.Form1_Load);
             this.ResizeEnd += new System.EventHandler(this.Form1_ResizeEnd);
             this.tableLayoutPanel1.ResumeLayout(false);

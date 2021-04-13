@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.IO.Ports;
@@ -197,6 +198,7 @@ namespace FCT
                     PortSwitch.Close();
                 }
                 this.Close();
+                Process.GetCurrentProcess().Kill();
             }
             else
             {
@@ -1078,12 +1080,6 @@ namespace FCT
                     { }
                 }
             }
-
-        }
-
-        private void FCT_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            Environment.Exit(Environment.ExitCode);
         }
 
         List<double> Datas = new List<double>();
